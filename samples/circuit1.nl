@@ -1,0 +1,10 @@
+Vs 4 0 Vs
+C1 3 1 C1
+C2 0 2 C2
+R1 3 1 R1
+R2 2 3 R2
+R3 3 4 R3
+X1 1 2 1 0 OPAMP
+.LIB OPAMP
+.TF V(1) (4)
+.END
