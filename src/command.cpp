@@ -4,6 +4,7 @@
 #include "Analyzer/netlist.h"
 #include "Analyzer/analyzer.h"
 #include "Analyzer/pretty.h"
+#include "Synthesizer/geneticsynthesizer.h"
 #include <QtCore/QCoreApplication>
 #include <QtCore/QCommandLineParser>
 #include <QtCore/QString>
@@ -38,11 +39,14 @@ static int analyze(const QString& netlistFile, const QString& libraryDirectory)
     return 0;
 }
 
-static int synthesize(const QString& outfile, const QString& nmask,
-                      const QString& dmask, const QString& active,
-                      const QString& xover, int rc, int cc, bool pcost,
-                      bool gcost, bool adaptive)
+static int genetic_synthesize(const QString& nreq, const QString& dreq,
+            const QString& active, int psize, int generations,
+            const QString& selection, const QString& xover,
+            float xp, float mp, int cc, int rc, bool adaptivem)
 {
+    GeneticSynthesizer gs;
+    gs.run(nreq, dreq, active, psize, generations, selection,
+           xover, xp, mp, cc, rc, adaptivem);
     return 0;
 }
 
@@ -55,41 +59,49 @@ void buildCommandLineParser(QCommandLineParser* parser, const QCoreApplication& 
     parser->addVersionOption();
 
     parser->addPositionalArgument("command",
-                    QCoreApplication::translate("main", "analyze | synthesize"));
+                    QCoreApplication::translate("main", "analyze | genetic-synthesize"));
 
     parser->parse(QCoreApplication::arguments());
     const QStringList args = parser->positionalArguments();
     const QString command = args.isEmpty() ? QString() : args.first();
-    if (command == "synthesize") {
+    if (command == "genetic-synthesize") {
         parser->clearPositionalArguments();
-        parser->addPositionalArgument("synthesize",
+        parser->addPositionalArgument("genetic-synthesize",
                 QCoreApplication::translate("main", "Generate a circuit which meets given requirements"));
         parser->addOptions({
-            {{"o", "output-file"},
-                QCoreApplication::translate("main", "Write solutions to <output-file>."),
-                QCoreApplication::translate("main", "output-file")},
-            {{"n", "numerator"},
-                QCoreApplication::translate("main", "Search for binary numerator <mask> (e.g. 010) Should match denominator in size."),
-                QCoreApplication::translate("main", "mask")},
-            {{"d", "denominator"},
-                QCoreApplication::translate("main", "Search for binary denominator <mask> (e.g. 111) Should match numerator in size."),
-                QCoreApplication::translate("main", "mask")},
-            {{"r", "nresistor"},
-                QCoreApplication::translate("main", "Specify the number of resistors."),
-                QCoreApplication::translate("main", "number")},
-            {{"c", "ncapacitor"},
+            {"numerator",
+                QCoreApplication::translate("main", "Search for binary numerator <requirements> (e.g. 001) Should match denominator in size."),
+                QCoreApplication::translate("main", "requirements")},
+            {"denominator",
+                QCoreApplication::translate("main", "Search for binary denominator <requirements> (e.g. 111) Should match numerator in size."),
+                QCoreApplication::translate("main", "requirements")},
+            {"ncapacitors",
                 QCoreApplication::translate("main", "Specify the number of capacitors."),
                 QCoreApplication::translate("main", "number")},
-            {{"a", "active-element"},
-                    QCoreApplication::translate("main", "Use given active element <type> OPAMP | OTRA."),
+            {"nresistors",
+                QCoreApplication::translate("main", "Specify the number of resistors."),
+                QCoreApplication::translate("main", "number")},
+            {"active-element",
+                QCoreApplication::translate("main", "Use given active element <type> OPAMP | OTRA. Default OPAMP."),
                 QCoreApplication::translate("main", "type")},
-            {{"x", "crossover"},
-                QCoreApplication::translate("main", "Perform crossover with a given <type> ONEPOINT | TWOPOINT | UNIFORM | SINGLEGENE."),
+            {"population-size",
+                QCoreApplication::translate("main", "Population size in a generation."),
+                QCoreApplication::translate("main", "number")},
+            {"ngenerations",
+                QCoreApplication::translate("main", "The number of generations"),
+                QCoreApplication::translate("main", "number")},
+            {"selection-type",
+                QCoreApplication::translate("main", "Perform selection with a given <type> ROULETTEWHEEL | RANK | TOURNAMENT. Default ROULETTEWHEEL."),
                 QCoreApplication::translate("main", "type")},
-            {"p",
-                QCoreApplication::translate("main", "Use phenotype diversity cost.")},
-            {"g",
-                QCoreApplication::translate("main", "Use genotype diversity cost.")},
+            {"crossover-type",
+                QCoreApplication::translate("main", "Perform crossover with a given <type> ONEPOINT | TWOPOINT | UNIFORM | SINGLEGENE. Default ONEPOINT."),
+                QCoreApplication::translate("main", "type")},
+            {"crossover-probability",
+                QCoreApplication::translate("main", "Crossover probability."),
+                QCoreApplication::translate("main", "probability")},
+            {"mutation-probability",
+                QCoreApplication::translate("main", "Mutation probability."),
+                QCoreApplication::translate("main", "probability")},
             {"m",
                 QCoreApplication::translate("main", "Use adaptive mutation probability.")},
             });
@@ -124,31 +136,43 @@ int runCommand(QCommandLineParser& parser, QCoreApplication& app)
             parser.showHelp(-1);
         }
         return analyze(netlistFile, libraryDirectory);
-    } else if (args[0] == "synthesize") {
+    } else if (args[0] == "genetic-synthesize") {
         bool ok = false;
-        const QString outfile = parser.value("output-file");
-        const QString nmask = parser.value("numerator");
-        const QString dmask = parser.value("denominator");
+        const QString nreq = parser.value("numerator");
+        const QString dreq = parser.value("denominator");
         QString active = parser.value("active-element");
-        QString xover = parser.value("crossover");
-        int rc = parser.value("nresistor").toInt(&ok);
+        QString selection = parser.value("selection-type");
+        QString xover = parser.value("crossover-type");
+
+        float xp = parser.value("crossover-probability").toFloat();
+        float mp = parser.value("mutation-probability").toFloat();
+
+        int rc = parser.value("nresistors").toInt(&ok);
         if (!ok || rc <= 0) {
             parser.showHelp(-1);
         }
-        int cc = parser.value("ncapacitor").toInt(&ok);
+
+        int cc = parser.value("ncapacitors").toInt(&ok);
         if (!ok || cc <= 0) {
             parser.showHelp(-1);
         }
-        if (outfile.isEmpty() || nmask.isEmpty() || dmask.isEmpty()) {
+
+        int psize = parser.value("population-size").toInt(&ok);
+        if (!ok || psize <= 0) {
             parser.showHelp(-1);
         }
 
-        if (nmask.size() != dmask.size()) {
+        int generations = parser.value("ngenerations").toInt(&ok);
+        if (!ok || generations <= 0) {
+            parser.showHelp(-1);
+        }
+
+        if (nreq.size() != dreq.size()) {
             parser.showHelp(-1);
         }
 
         QRegExp rx("[01]+");
-        if (!rx.exactMatch(nmask) || !rx.exactMatch(dmask)) {
+        if (!rx.exactMatch(nreq) || !rx.exactMatch(dreq)) {
             parser.showHelp(-1);
         }
 
@@ -156,14 +180,17 @@ int runCommand(QCommandLineParser& parser, QCoreApplication& app)
             active = "OPAMP";
         }
 
+        if (selection.isEmpty()) {
+            selection = "ROULETTEWHEEL";
+        }
+
         if (xover.isEmpty()) {
             xover = "ONEPOINT";
         }
-        bool pcost = parser.isSet("p");
-        bool gcost = parser.isSet("g");
-        bool adaptive = parser.isSet("m");
-        return synthesize(outfile, nmask, dmask, active,
-                          xover, rc, cc, pcost, gcost, adaptive);
+
+        bool adaptivem = parser.isSet("m");
+        return genetic_synthesize(nreq, dreq, active, psize,
+                    generations, selection, xover, xp, mp, cc, rc, adaptivem);
     } else {
         parser.showHelp(-1);
     }

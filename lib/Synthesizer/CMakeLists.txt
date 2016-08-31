@@ -6,10 +6,30 @@ find_package(CLN)
 find_package(GiNaC)
 
 set(libsynthesizer_SOURCES
+    chromosome.cpp
+    crossover.cpp
+    estimator.cpp
+    geneticsynthesizer.cpp
+    mutation.cpp
+    opampfilterchromosome.cpp
+    otrafilterchromosome.cpp
+    population.cpp
+    selection.cpp
+    utilities.cpp
 )
 
 set(libsynthesizer_HEADERS
   ${CMAKE_SOURCE_DIR}/lib/dbg.h
+  chromosome.h
+  crossover.h
+  estimator.h
+  geneticsynthesizer.h
+  mutation.h
+  opampfilterchromosome.h
+  otrafilterchromosome.h
+  population.h
+  selection.h
+  utilities.h
 )
 
 add_library(${SYNTHESIZERLIB} STATIC ${libsynthesizer_SOURCES} ${libsynthesizer_HEADERS})
@@ -21,4 +41,5 @@ target_link_libraries(${SYNTHESIZERLIB}
 
 target_include_directories(${SYNTHESIZERLIB} PRIVATE
   ${CMAKE_SOURCE_DIR}/lib/Synthesizer
+  ${CMAKE_SOURCE_DIR}/lib/Analyzer
   ${CMAKE_SOURCE_DIR}/lib)

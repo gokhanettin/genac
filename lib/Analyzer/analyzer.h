@@ -55,6 +55,7 @@ public:
     GiNaC::ex calcVoltage(const QString& exp, bool* found = 0);
     GiNaC::ex calcCurrent(const QString& exp,bool* found = 0);
     GiNaC::ex calcValue(const QString& exp);
+    TransferFunction calcTF(const QString& out, const QString& in);
     QList<TransferFunction> calcTFs(const QList<QStringList>& tfs);
 private:
      void destroy();

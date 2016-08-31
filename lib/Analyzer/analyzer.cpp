@@ -363,7 +363,37 @@ GiNaC::ex Analyzer::calcValue(const QString& exp)
     return res;
 }
 
- QList<Analyzer::TransferFunction> Analyzer::calcTFs(const QList<QStringList>& tfs)
+Analyzer::TransferFunction Analyzer::calcTF(const QString& out, const QString& in)
+{
+    using namespace std;
+    GiNaC::ex num,den,num_den;
+    TransferFunction tf;
+    const GiNaC::realsymbol inf = m_symbols.getInf();
+    num = calcValue(out);
+    den = calcValue(in);
+
+
+    tf.rhs = num/den;
+
+    num_den = tf.rhs.numer_denom();
+
+    int deg = num_den.op(0).degree(inf);
+
+    num = num_den.op(0).expand().coeff(inf,deg);
+    den = num_den.op(1).expand().coeff(inf,deg);
+    if(den == 0){
+        tf.rhs = inf;
+    }
+    else{
+        tf.rhs = num/den;
+    }
+
+    tf.lhs = GiNaC::realsymbol(out.toStdString()) / GiNaC::realsymbol(in.toStdString());
+
+    return tf;
+}
+
+QList<Analyzer::TransferFunction> Analyzer::calcTFs(const QList<QStringList>& tfs)
  {
      using namespace std;
     QList<TransferFunction> list;
@@ -373,7 +403,6 @@ GiNaC::ex Analyzer::calcValue(const QString& exp)
         TransferFunction tf;
         num = calcValue(tfs.at(i).at(0));
         den = calcValue(tfs.at(i).at(1));
-
 
         tf.rhs = num/den;
 
@@ -394,7 +423,7 @@ GiNaC::ex Analyzer::calcValue(const QString& exp)
 
         tf.lhs = GiNaC::realsymbol(tfs.at(i).at(0).toStdString()) / GiNaC::realsymbol(tfs.at(i).at(1).toStdString());
 
-            list.append(tf);
+        list.append(tf);
     }
 
     return list;
