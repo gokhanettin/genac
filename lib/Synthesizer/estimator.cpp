@@ -61,7 +61,8 @@ void Estimator::setQuality(Chromosome *c)
     } catch (const std::exception &e) {
         ++m_nexception;
         qDebug() << QString::fromStdString(e.what())
-                 << " exception: " << m_nexception;
+                 << " exception: " << m_nexception
+                 << " " << c->toPrintable();
         c->setQuality(BETA);
         c->setTransferFunction("Makes an inconsistent matrix");
         return;
