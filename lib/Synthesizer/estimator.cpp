@@ -5,10 +5,11 @@
 #include "Analyzer/circuit.h"
 #include "Analyzer/pretty.h"
 #include <cfloat>
+#include <cmath>
 #include "dbg.h"
 
-# define ALPHA (0.90f)
-# define BETA  (0.10f)
+# define ALPHA (0.60f)
+# define BETA  (0.40f)
 
 #define VALID_FUNC(cost)   (BETA + ALPHA / (1.0f + (float)(cost)))
 #define INVALID_FUNC(cost) (BETA / (1.0f + (float)(cost)))
@@ -33,6 +34,7 @@ void Estimator::setRequirements(const QString& requirements)
     for (int i = 0; i < requirements.size(); ++i) {
         m_requirements[i] = (requirements[i] == '1');
     }
+    m_sums.resize(requirements.size());
 }
 
 void Estimator::setQuality(Chromosome *c)
@@ -60,8 +62,13 @@ void Estimator::setQuality(Chromosome *c)
         ++m_nexception;
         qDebug() << QString::fromStdString(e.what())
                  << " exception: " << m_nexception;
-        c->setQuality(FLT_EPSILON);
+        c->setQuality(BETA);
         c->setTransferFunction("Makes an inconsistent matrix");
+        return;
+    }
+
+    if (tf.rhs.is_zero() || tf.rhs.is_equal(m_inf) || tf.rhs.is_equal(1)) {
+        c->setQuality(BETA);
         return;
     }
 
@@ -98,10 +105,10 @@ void Estimator::setPopulationData(Population *p)
     int L = p->at(0)->size();
     int R = m_requirements.size();
     float diversity = 0.0f;
-    QVector<int> sums;
-    sums.resize(R);
     Chromosome *ci = nullptr;
     Chromosome *cj = nullptr;
+    // m_sums.clear();
+    // m_sums.resize(m_requirements.size());
     for (int i = 0; i < M-1; ++i) {
         ci = (*p)[i];
         for (int j = i + 1; j < M; ++j) {
@@ -111,7 +118,7 @@ void Estimator::setPopulationData(Population *p)
         setQuality(ci);
         if (ci->isValid()) {
             for (int k = 0; k < R; ++k) {
-                    sums[k] += ci->hasImperfection(k);
+                    m_sums[k] += ci->hasImperfection(k);
             }
         }
     }
@@ -119,7 +126,7 @@ void Estimator::setPopulationData(Population *p)
     setQuality(ci);
     for (int k = 0; k < R; ++k) {
         if (ci->isValid()) {
-            sums[k] += ci->hasImperfection(k);
+            m_sums[k] += ci->hasImperfection(k);
         }
     }
     diversity /= (L * M * (M - 1)/2.0f);
@@ -128,7 +135,7 @@ void Estimator::setPopulationData(Population *p)
     float avrgq = 0.0f;
     float maxq = 0.0f;
     float q = 0.0f;
-    for (int i = 0; i < M-1; ++i) {
+    for (int i = 0; i < M; ++i) {
         ci = (*p)[i];
         q = ci->quality();
         if (q > maxq) {
@@ -138,9 +145,10 @@ void Estimator::setPopulationData(Population *p)
         avrgq += q;
         if (ci->isValid()) {
             for (int k = 0; k < R; ++k) {
-                cost += sums[k] * ci->hasImperfection(k);
+                cost += m_sums[k] * m_sums[k] * ci->hasImperfection(k);
             }
-            cost /= M;
+            cost /= (float)R;
+            cost = sqrtf(cost);
             ci->setFitness(VALID_FUNC(cost));
         } else {
             ci->setFitness(q);

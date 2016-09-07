@@ -6,11 +6,6 @@
 
 #define TOURNAMENT_SIZE (4)
 
-static bool lessThan(Chromosome *c1, Chromosome *c2)
-{
-    return c1->fitness() < c2->fitness();
-}
-
 void Selection::rouletteWheel(Population* population, Chromosome** parent)
 {
     float sum = 0.0f;
@@ -40,7 +35,6 @@ void Selection::rank(Population* population, Chromosome** parent)
     int r = randomInt(1, sum);
     int i = 1;
     sum = 0.0f;
-    std::sort(population->begin(), population->end(), lessThan);
     QList<Chromosome*>::Iterator it = population->begin();
     while (it != population->end()) {
         sum += i;

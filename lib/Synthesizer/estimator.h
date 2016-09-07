@@ -20,6 +20,7 @@ public:
 private:
     Analyzer *m_analyzer;
     int m_nexception;
+    QVector<int> m_sums;
     GiNaC::realsymbol m_s;
     GiNaC::realsymbol m_inf;
     QVector<bool> m_requirements;

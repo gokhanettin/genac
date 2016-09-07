@@ -13,7 +13,7 @@
 #define RECORDFILE "GARecords.txt"
 #define SAVEFILE   "GABests.txt"
 
-#define DIVERSITY_TO_MUTATION_P(d) (powf(M_E, (-20.0f*d)))
+#define DIVERSITY_TO_MUTATION_P(d) (powf(M_E, (-10.0f*d)))
 
 #define setChromosomeType(t, x)                    \
     do {                                           \
@@ -47,6 +47,12 @@
             t = GeneticSynthesizer::CrossoverType::SingleGene;    \
         }                                                         \
     } while(0)
+
+
+static bool lessThan(Chromosome *c1, Chromosome *c2)
+{
+    return c1->fitness() < c2->fitness();
+}
 
 GeneticSynthesizer::GeneticSynthesizer()
     :m_estimator(new Estimator),
@@ -91,6 +97,7 @@ void GeneticSynthesizer::run(const QString& nreq, const QString& dreq,
         population = new Population;
         population->reserve(psize);
         m_estimator->setPopulationData(m_population);
+        std::sort(m_population->begin(), m_population->end(), lessThan);
         record(n);
         Chromosome *c = nullptr;
         qDebug() << "Generation: " << n;
@@ -99,9 +106,10 @@ void GeneticSynthesizer::run(const QString& nreq, const QString& dreq,
             if (c->quality() == 1.0f) {
                 save(c, n);
             }
-            qDebug() << c->toPrintable() << " ---> " << c->quality();
-            qDebug().nospace().noquote() << c->transferFunction();
+            qDebug() << c->toPrintable() << " ---> " << c->fitness();
+            // qDebug().nospace().noquote() << c->transferFunction();
         }
+        Chromosome *best = Chromosome::clone(*m_population->last());
         while (population->size() < psize) {
             Chromosome *parent1 = nullptr;
             Chromosome *parent2 = nullptr;
@@ -121,7 +129,11 @@ void GeneticSynthesizer::run(const QString& nreq, const QString& dreq,
             }
             population->append(child1);
             population->append(child2);
+            delete parent1;
+            delete parent2;
         }
+        delete (*population)[0];
+        (*population)[0] = best;
         delete m_population;
         m_population = population;
     }
@@ -132,15 +144,21 @@ void GeneticSynthesizer::select(Chromosome **parent1, Chromosome **parent2)
     switch (m_selectionType) {
     case RouletteWheel:
         Selection::rouletteWheel(m_population, parent1);
+        m_population->removeOne(*parent1);
         Selection::rouletteWheel(m_population, parent2);
+        m_population->removeOne(*parent2);
         break;
     case Rank:
         Selection::rank(m_population, parent1);
+        m_population->removeOne(*parent1);
         Selection::rank(m_population, parent2);
+        m_population->removeOne(*parent2);
         break;
     case Tournament:
         Selection::tournament(m_population, parent1);
+        m_population->removeOne(*parent1);
         Selection::tournament(m_population, parent2);
+        m_population->removeOne(*parent2);
         break;
     }
 }
