@@ -73,6 +73,11 @@ int Chromosome::nShortCircuits() const
         }
     }
 
+    // Short-circuit Vs
+    if (_CONST_I(_CONST_E(3)) == 0) {
+        ++cnt;
+    }
+
     if(inputNode() == 0) {
         ++cnt;
     }
