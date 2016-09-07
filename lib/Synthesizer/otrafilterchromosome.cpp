@@ -100,5 +100,10 @@ int OtraFilterChromosome::nShortCircuits() const
     if (_CONST_I(_CONST_E(0)) == _CONST_I(_CONST_E(1))) {
         ++n;
     }
+    for (int i = 0; i < 3; ++i) {
+        if (_CONST_I(_CONST_E(i)) == _CONST_I(_CONST_E(3))) {
+            ++n;
+        }
+    }
     return n;
 }
