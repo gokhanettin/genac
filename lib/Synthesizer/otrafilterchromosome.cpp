@@ -96,7 +96,7 @@ int OtraFilterChromosome::esize() const
 int OtraFilterChromosome::nShortCircuits() const
 {
     CONST_SPLIT_IE(this);
-    int n = Chromosome::nOpenCircuits();
+    int n = Chromosome::nShortCircuits();
     if (_CONST_I(_CONST_E(0)) == _CONST_I(_CONST_E(1))) {
         ++n;
     }
