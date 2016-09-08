@@ -3,12 +3,12 @@
 
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
+#include <QtCore/QSet>
+#include <QtCore/QString>
 
-class QString;
 class Estimator;
 class Population;
 class Chromosome;
-
 class GeneticSynthesizer
 {
 public:
@@ -48,5 +48,6 @@ private:
     QFile m_saveFile;
     QTextStream m_recordStream;
     QTextStream m_saveStream;
+    QSet<QString> m_bests;
 };
 #endif /* SYNTHESIZER */

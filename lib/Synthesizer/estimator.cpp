@@ -63,15 +63,15 @@ void Estimator::setQuality(Chromosome *c)
         qDebug() << QString::fromStdString(e.what())
                  << " exception: " << m_nexception
                  << " " << c->toPrintable();
-        c->setQuality(BETA);
+        c->setQuality(FLT_EPSILON);
         c->setTransferFunction("Makes an inconsistent matrix");
         return;
     }
 
-    if (tf.rhs.is_zero() || tf.rhs.is_equal(m_inf) || tf.rhs.is_equal(1)) {
-        c->setQuality(BETA);
-        return;
-    }
+    // if (tf.rhs.is_zero() || tf.rhs.is_equal(m_inf) || tf.rhs.is_equal(1)) {
+    //     c->setQuality(BETA);
+    //     return;
+    // }
 
     int degree = reqsize / 2 - 1;
     GiNaC::ex numer, denom, coeff;
@@ -155,6 +155,23 @@ void Estimator::setPopulationData(Population *p)
             ci->setFitness(q);
         }
     }
-    p->setAverageQuality(avrgq / (float)M);
+
+    avrgq /= M;
+    p->setAverageQuality(avrgq);
     p->setMaxQuality(q);
+
+    float maxf = 0.0f;
+    float avrgf = 0.0f;
+    float f = 0.0f;
+    for (int i = 0; i < M; ++i) {
+        ci = (*p)[i];
+        f = ci->fitness();
+        if (f > maxf) {
+            maxf = f;
+        }
+        avrgf += f;
+    }
+    avrgf /= M;
+    p->setAverageFitness(avrgf);
+    p->setMaxFitness(maxf);
 }

@@ -67,11 +67,12 @@ GeneticSynthesizer::GeneticSynthesizer()
     }
     if (m_recordFile.open(QFile::WriteOnly | QFile::Truncate)) {
         m_recordStream.setDevice(&m_recordFile);
-        m_recordStream.setFieldWidth(9);
         m_recordStream.setRealNumberNotation(QTextStream::FixedNotation);
         m_recordStream.setNumberFlags(QTextStream::ForcePoint);
         m_recordStream.setRealNumberPrecision(4);
-        m_recordStream << "generation" << " " << "quality" << " " << "diversity" << "\n";
+        m_recordStream << "Generation;Avergage Quality;MaxQuality;"
+                       << "Average Fitness;Max Fitness;"
+                       << "Diversity\n";
     }
 }
 
@@ -195,14 +196,20 @@ void GeneticSynthesizer::mutate(Chromosome *c)
 
 void GeneticSynthesizer::save(const Chromosome *c, int gen)
 {
-    m_saveStream << "********** " << gen << " **********\n"
-                 << c->toNetlist() << "\n" << c->transferFunction() << "\n";
-    m_saveStream.flush();
+    QString best = c->toPrintable();
+    if (!m_bests.contains(best)) {
+        m_saveStream << "********** " << gen << " **********\n"
+                     << c->toNetlist() << "\n" << c->transferFunction() << "\n";
+        m_saveStream.flush();
+        m_bests.insert(best);
+    }
 }
 
 void GeneticSynthesizer::record(int gen)
 {
-    m_recordStream << gen << " " << m_population->averageQuality()
-                   << " " << m_population->diversity() << "\n";
+    m_recordStream << gen
+                   << ";" << m_population->averageQuality() << ";" << m_population->maxQuality()
+                   << ";" << m_population->averageFitness() << ";" << m_population->maxFitness()
+                   << ";" << m_population->diversity() << "\n";
     m_recordStream.flush();
 }

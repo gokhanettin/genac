@@ -24,6 +24,17 @@ public:
     float averageQuality() const
     {return m_avrgQuality;}
 
+
+    void setMaxFitness(float f)
+    {m_maxFitness = f;}
+    float maxFitness() const
+    {return m_maxFitness;}
+
+    void setAverageFitness(float f)
+    {m_avrgFitness = f;}
+    float averageFitness() const
+    {return m_avrgFitness;}
+
     void setDiversity(float d)
     {m_diversity = d;}
     float diversity() const
@@ -31,6 +42,8 @@ public:
 private:
     float m_maxQuality;
     float m_avrgQuality;
+    float m_maxFitness;
+    float m_avrgFitness;
     float m_diversity;
 };
 #endif /* POPULATION_H */
