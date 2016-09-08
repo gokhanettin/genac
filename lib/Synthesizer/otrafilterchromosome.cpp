@@ -7,8 +7,8 @@
 #include "utilities.h"
 #include <QtCore/QStringList>
 
-OtraFilterChromosome::OtraFilterChromosome(int resistor,int capacitor)
-    :Chromosome(resistor,capacitor)
+OtraFilterChromosome::OtraFilterChromosome(int ncapacitors, int nresistors)
+    :Chromosome(ncapacitors, nresistors)
 {
     m_type = Chromosome::OtraFilter;
 }
@@ -42,7 +42,10 @@ QString OtraFilterChromosome::toNetlist() const
         QString::number(_CONST_I(_CONST_E(0))) + " " +
         QString::number(_CONST_I(_CONST_E(2))) + " " + "0 OTRA\n";
 
-    str += ".LIB OTRA\n.END";
+    str += ".LIB OTRA\n";
+    str += QString(".TF V(%1) V(%2)\n")
+        .arg(QString::number(outputNode()), QString::number(inputNode()));
+    str += ".END";
 
     return str;
 }

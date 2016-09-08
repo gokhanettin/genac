@@ -13,7 +13,7 @@
 class OpampFilterChromosome : public Chromosome
 {
 public:
-    OpampFilterChromosome(int ncapacitor, int nresistor);
+    OpampFilterChromosome(int ncapacitors, int nresistors);
 
     virtual ~OpampFilterChromosome() =default;
 

@@ -7,8 +7,8 @@
 #include "utilities.h"
 #include <QtCore/QStringList>
 
-OpampFilterChromosome::OpampFilterChromosome(int nresistor,int ncapacitor)
-    :Chromosome(nresistor, ncapacitor)
+OpampFilterChromosome::OpampFilterChromosome(int ncapacitors, int nresistors)
+    :Chromosome(ncapacitors, nresistors)
 {
     m_type = Chromosome::OpampFilter;
 }
@@ -42,8 +42,10 @@ QString OpampFilterChromosome::toNetlist() const
         QString::number(_CONST_I(_CONST_E(0))) + " " +
         QString::number(_CONST_I(_CONST_E(2))) + " " + "0 OPAMP\n";
 
-    str += ".LIB OPAMP\n.END";
-
+    str += ".LIB OPAMP\n";
+    str += QString(".TF V(%1) V(%2)\n")
+        .arg(QString::number(outputNode()), QString::number(inputNode()));
+    str += ".END";
     return str;
 }
 /*virtual*/

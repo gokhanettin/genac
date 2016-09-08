@@ -13,7 +13,7 @@
 class OtraFilterChromosome : public Chromosome
 {
 public:
-    OtraFilterChromosome(int ncapacitor, int nresistor);
+    OtraFilterChromosome(int ncapacitors, int nresistors);
 
     virtual ~OtraFilterChromosome() =default;
 
