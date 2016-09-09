@@ -3,6 +3,7 @@
 
 #include <QtCore/QVector>
 #include <ginac/ginac.h>
+#include <QtCore/QString>
 
 class Chromosome;
 class Population;

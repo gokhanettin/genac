@@ -1,7 +1,7 @@
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt5 COMPONENTS Core)
+find_package(Qt5 5.5.0 COMPONENTS Core)
 find_package(CLN)
 find_package(GiNaC)
 
