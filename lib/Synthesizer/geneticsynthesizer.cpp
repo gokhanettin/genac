@@ -116,6 +116,10 @@ void GeneticSynthesizer::run(const QString& nreq, const QString& dreq,
             Chromosome *parent2 = nullptr;
             Chromosome *child1 = nullptr;
             Chromosome *child2 = nullptr;
+            if (m_population->size() == 1) {
+                population->append(m_population->takeFirst());
+                break;
+            }
             select(&parent1, &parent2);
             if (flip(xp)) {
                 crossover(parent1, parent2, &child1, &child2);

@@ -48,6 +48,7 @@ QString OpampFilterChromosome::toNetlist() const
     str += ".END";
     return str;
 }
+
 /*virtual*/
 Circuit* OpampFilterChromosome::toCircuit() const
 {

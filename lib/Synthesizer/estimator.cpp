@@ -68,10 +68,10 @@ void Estimator::setQuality(Chromosome *c)
         return;
     }
 
-    // if (tf.rhs.is_zero() || tf.rhs.is_equal(m_inf) || tf.rhs.is_equal(1)) {
-    //     c->setQuality(BETA);
-    //     return;
-    // }
+    if (tf.rhs.is_zero() || tf.rhs.is_equal(m_inf) || tf.rhs.is_equal(1)) {
+        c->setQuality(BETA);
+        return;
+    }
 
     int degree = reqsize / 2 - 1;
     GiNaC::ex numer, denom, coeff;
@@ -101,10 +101,10 @@ void Estimator::setQuality(Chromosome *c)
 void Estimator::setPopulationData(Population *p)
 {
     Q_CHECK_PTR(p);
-    int M = p->size();
+    const int M = p->size();
     Q_ASSERT(M > 0);
     int L = p->at(0)->size();
-    int R = m_requirements.size();
+    const int R = m_requirements.size();
     float diversity = 0.0f;
     Chromosome *ci = nullptr;
     Chromosome *cj = nullptr;
@@ -158,7 +158,7 @@ void Estimator::setPopulationData(Population *p)
 
     avrgq /= M;
     p->setAverageQuality(avrgq);
-    p->setMaxQuality(q);
+    p->setMaxQuality(maxq);
 
     float maxf = 0.0f;
     float avrgf = 0.0f;
