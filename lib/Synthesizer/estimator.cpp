@@ -54,6 +54,8 @@ void Estimator::setQuality(Chromosome *c)
     Analyzer::TransferFunction tf;
     try {
         m_analyzer->solve();
+        delete circuit;
+        circuit = nullptr;
         QString out = QString("V(%1)").arg(QString::number(c->outputNode()));
         QString in = QString("V(%1)").arg(QString::number(c->inputNode()));
         tf = m_analyzer->calcTF(out, in);
@@ -65,11 +67,15 @@ void Estimator::setQuality(Chromosome *c)
                  << " " << c->toPrintable();
         c->setQuality(FLT_EPSILON);
         c->setTransferFunction("Makes an inconsistent matrix");
+        delete circuit;
+        circuit = nullptr;
         return;
     }
 
     if (tf.rhs.is_zero() || tf.rhs.is_equal(m_inf) || tf.rhs.is_equal(1)) {
         c->setQuality(BETA);
+        delete circuit;
+        circuit = nullptr;
         return;
     }
 
