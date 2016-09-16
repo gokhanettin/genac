@@ -297,13 +297,13 @@ void Netlist::parser(QString* err, QTextStream& netStream, bool parseFlag,
                         *err = "No Library path specified";
                         return;
                     }
-                    QFile libFile(libDir + tokens[1]);
+                    QFile libFile(libDir + "/" + tokens[1]);
                     if(libFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
                         QTextStream libStream(&libFile);
                         parser(err, libStream, false, ac, libDir);
                     }
                     else {
-                        *err = libDir + tokens[1] + " does not exist!";
+                        *err = libDir + "/" + tokens[1] + " does not exist!";
                         return;
                     }
                 }
