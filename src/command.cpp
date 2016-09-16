@@ -1,5 +1,5 @@
 #include "command.h"
-// #include "config.h"
+#include "config.h"
 #include "Analyzer/circuit.h"
 #include "Analyzer/netlist.h"
 #include "Analyzer/analyzer.h"
@@ -52,9 +52,9 @@ static int genetic_synthesize(const QString& nreq, const QString& dreq,
 
 void buildCommandLineParser(QCommandLineParser* parser, const QCoreApplication& app)
 {
-    // QCoreApplication::setApplicationName(GENAC);
-    // QCoreApplication::setApplicationVersion(GENAC_VERSION);
-    // parser->setApplicationDescription(GENAC_DESCRIPTION);
+    QCoreApplication::setApplicationName(GENAC);
+    QCoreApplication::setApplicationVersion(GENAC_VERSION);
+    parser->setApplicationDescription(GENAC_DESCRIPTION);
     parser->addHelpOption();
     parser->addVersionOption();
 
@@ -100,10 +100,8 @@ void buildCommandLineParser(QCommandLineParser* parser, const QCoreApplication& 
                 QCoreApplication::translate("main", "Crossover probability."),
                 QCoreApplication::translate("main", "probability")},
             {"mutation-probability",
-                QCoreApplication::translate("main", "Mutation probability."),
+                QCoreApplication::translate("main", "Mutation probability. If unspecified, uses adaptive mutation probability."),
                 QCoreApplication::translate("main", "probability")},
-            {"m",
-                QCoreApplication::translate("main", "Use adaptive mutation probability.")},
             });
         parser->process(app);
     } else if (command == "analyze") {
@@ -144,8 +142,16 @@ int runCommand(QCommandLineParser& parser, QCoreApplication& app)
         QString selection = parser.value("selection-type");
         QString xover = parser.value("crossover-type");
 
-        float xp = parser.value("crossover-probability").toFloat();
-        float mp = parser.value("mutation-probability").toFloat();
+        float xp = parser.value("crossover-probability").toFloat(&ok);
+        if (!ok) {
+            parser.showHelp(-1);
+        }
+        float mp = parser.value("mutation-probability").toFloat(&ok);
+        bool adaptivem = false;
+
+        if (!ok) {
+            adaptivem = true;
+        }
 
         int rc = parser.value("nresistors").toInt(&ok);
         if (!ok || rc <= 0) {
@@ -188,7 +194,6 @@ int runCommand(QCommandLineParser& parser, QCoreApplication& app)
             xover = "ONEPOINT";
         }
 
-        bool adaptivem = parser.isSet("m");
         return genetic_synthesize(nreq, dreq, active, psize,
                     generations, selection, xover, xp, mp, cc, rc, adaptivem);
     } else {
