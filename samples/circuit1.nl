@@ -6,5 +6,6 @@ R2 2 3 R2
 R3 3 4 R3
 X1 1 2 1 0 OPAMP
 .LIB OPAMP
-.TF V(1) (4)
+.TF V(1) V(4)
 .END
+

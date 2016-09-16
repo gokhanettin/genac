@@ -9,3 +9,4 @@ X1 0 1 3 0 OPAMP
 .LIB OPAMP
 .TF V(3) V(7)
 .END
+
