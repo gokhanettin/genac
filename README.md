@@ -16,7 +16,7 @@ make
 Run the analyzer:
 
 ```
-src/genac analyze -n ../samples/circuit1.nl -l ../samples/LIB
+$ src/genac analyze -n ../samples/circuit1.nl -l ../samples/LIB
 *  V(1)
 *  ----- =
 *  V(4)
@@ -29,7 +29,7 @@ src/genac analyze -n ../samples/circuit1.nl -l ../samples/LIB
 Run genetic algorithm based synthesizer:
 
 ```
-src/genac genetic-synthesize \
+$ src/genac genetic-synthesize \
 --numerator 001   \
 --denominator 111 \
 --ncapacitors 2   \
