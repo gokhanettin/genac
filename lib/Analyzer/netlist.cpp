@@ -297,13 +297,18 @@ void Netlist::parser(QString* err, QTextStream& netStream, bool parseFlag,
                         *err = "No Library path specified";
                         return;
                     }
-                    QFile libFile(libDir + "/" + tokens[1]);
+                    QString libd = libDir;
+                    if (libDir.at(libDir.size() - 1) !=  '/') {
+                        libd += QString("/");
+                    }
+
+                    QFile libFile(libd + tokens[1]);
                     if(libFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
                         QTextStream libStream(&libFile);
-                        parser(err, libStream, false, ac, libDir);
+                        parser(err, libStream, false, ac, libd);
                     }
                     else {
-                        *err = libDir + "/" + tokens[1] + " does not exist!";
+                        *err = libd + tokens[1] + " does not exist!";
                         return;
                     }
                 }
@@ -330,6 +335,6 @@ void Netlist::parser(QString* err, QTextStream& netStream, bool parseFlag,
             }
         }
 
-        parser(err, netStream, parseFlag, ac,libDir);
+        parser(err, netStream, parseFlag, ac, libDir);
     }
 }
