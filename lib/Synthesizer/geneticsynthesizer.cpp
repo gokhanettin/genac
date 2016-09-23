@@ -131,6 +131,8 @@ void GeneticSynthesizer::run(const QString& nreq, const QString& dreq,
             if (flip(mutp)) {
                 mutate(child1);
                 mutate(child2);
+                child1->setTransferFunction(QString());
+                child2->setTransferFunction(QString());
             }
             population->append(child1);
             population->append(child2);
