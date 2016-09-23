@@ -8,8 +8,8 @@
 #include <cmath>
 #include "dbg.h"
 
-# define ALPHA (0.60f)
-# define BETA  (0.40f)
+# define ALPHA (0.55f)
+# define BETA  (0.45f)
 
 #define VALID_FUNC(cost)   (BETA + ALPHA / (1.0f + (float)(cost)))
 #define INVALID_FUNC(cost) (BETA / (1.0f + (float)(cost)))
@@ -136,6 +136,9 @@ void Estimator::setPopulationData(Population *p)
             m_sums[k] += ci->hasImperfection(k);
         }
     }
+
+    qDebug() << "Imperfection sums: " << m_sums;
+
     diversity /= (L * M * (M - 1)/2.0f);
     p->setDiversity(diversity);
     float cost = 0.0f;

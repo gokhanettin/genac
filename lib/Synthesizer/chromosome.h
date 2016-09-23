@@ -67,8 +67,11 @@ public:
 
     void setFitness(float fitness)
     {m_fitness = fitness;}
-    float fitness() const
-    {return  m_fitness;}
+
+    float fitness() const;
+
+    void penalize()
+    {++m_penalty;}
 
     bool isValid() const
     {return !m_imperfections.isEmpty();}
@@ -111,6 +114,7 @@ protected:
 private:
     int m_ncapacitor;
     int m_nresistor;
+    int m_penalty;
     float m_quality;
     float m_fitness;
     QString m_transferFunction;

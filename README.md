@@ -35,9 +35,9 @@ $ src/genac genetic-synthesize \
 --ncapacitors 2   \
 --nresistors 3    \
 --active-element OPAMP \
---population-size 25 \
+--population-size 15 \
 --ngenerations 500 \
---selection-type ROULETTEWHEEL \
+--selection-type RANK \
 --crossover-type ONEPOINT \
 --crossover-probability 0.80 \
 --mutation-probability 0.01 # if not provided, defaults to adaptive mutation probability.

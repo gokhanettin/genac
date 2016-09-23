@@ -2,12 +2,14 @@
 #include "opampfilterchromosome.h"
 #include "otrafilterchromosome.h"
 #include "utilities.h"
-#include <climits>
+#include <cmath>
 #include "dbg.h"
+
+#define PENALIZED(f, p) (f * powf(M_E, (-1.0f*p)))
 
 Chromosome::Chromosome(int ncapacitors, int nresistors)
     :m_type{OpampFilter}, m_ncapacitor{ncapacitors}, m_nresistor{nresistors},
-     m_quality(0.0f), m_fitness(0.0f)
+     m_penalty(0), m_quality(0.0f), m_fitness(0.0f)
 {
 }
 
@@ -32,6 +34,12 @@ int Chromosome::size() const
 void Chromosome::fill()
 {
     m_IE.resize(size());
+}
+
+
+float Chromosome::fitness() const
+{
+    return  PENALIZED(m_fitness, m_penalty);
 }
 
 /*virtual*/

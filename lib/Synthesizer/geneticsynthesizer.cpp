@@ -134,13 +134,12 @@ void GeneticSynthesizer::run(const QString& nreq, const QString& dreq,
             }
             population->append(child1);
             population->append(child2);
-            delete parent1;
-            delete parent2;
         }
         delete (*population)[0];
         (*population)[0] = best;
         delete m_population;
         m_population = population;
+        std::sort(m_population->begin(), m_population->end(), lessThan);
     }
 }
 
@@ -149,21 +148,21 @@ void GeneticSynthesizer::select(Chromosome **parent1, Chromosome **parent2)
     switch (m_selectionType) {
     case RouletteWheel:
         Selection::rouletteWheel(m_population, parent1);
-        m_population->removeOne(*parent1);
+        (*parent1)->penalize();
         Selection::rouletteWheel(m_population, parent2);
-        m_population->removeOne(*parent2);
+        (*parent2)->penalize();
         break;
     case Rank:
         Selection::rank(m_population, parent1);
-        m_population->removeOne(*parent1);
+        (*parent1)->penalize();
         Selection::rank(m_population, parent2);
-        m_population->removeOne(*parent2);
+        (*parent2)->penalize();
         break;
     case Tournament:
         Selection::tournament(m_population, parent1);
-        m_population->removeOne(*parent1);
+        (*parent1)->penalize();
         Selection::tournament(m_population, parent2);
-        m_population->removeOne(*parent2);
+        (*parent2)->penalize();
         break;
     }
 }

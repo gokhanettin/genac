@@ -27,4 +27,6 @@ private:
     QVector<bool> m_requirements;
 };
 
+
+
 #endif /* ESTIMATOR_H */
