@@ -210,10 +210,6 @@ Chromosome* Chromosome::clone(const Chromosome& other)
     for (int i = 0; i < other.size(); ++i) {
         (*c)[i] = other[i];
     }
-    c->setQuality(other.quality());
-    c->setFitness(other.fitness());
-    c->setImperfections(other.imperfections());
-    c->setTransferFunction(other.transferFunction());
     return c;
 }
 

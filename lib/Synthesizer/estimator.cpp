@@ -61,21 +61,19 @@ void Estimator::setQuality(Chromosome *c)
         tf = m_analyzer->calcTF(out, in);
         c->setTransferFunction(pretty(tf));
     } catch (const std::exception &e) {
+        delete circuit;
+        circuit = nullptr;
         ++m_nexception;
         qDebug() << QString::fromStdString(e.what())
                  << " exception: " << m_nexception
                  << " " << c->toPrintable();
         c->setQuality(FLT_EPSILON);
         c->setTransferFunction("Makes an inconsistent matrix");
-        delete circuit;
-        circuit = nullptr;
         return;
     }
 
     if (tf.rhs.is_zero() || tf.rhs.is_equal(m_inf) || tf.rhs.is_equal(1)) {
         c->setQuality(BETA);
-        delete circuit;
-        circuit = nullptr;
         return;
     }
 
