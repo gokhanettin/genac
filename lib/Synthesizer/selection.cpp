@@ -28,6 +28,7 @@ void Selection::rouletteWheel(Population* population, Chromosome** parent)
     }
 }
 
+// Precondition: population should be sorted.
 void Selection::rank(Population* population, Chromosome** parent)
 {
     int size = population->size();

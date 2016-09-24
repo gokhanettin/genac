@@ -153,7 +153,7 @@ void Estimator::setPopulationData(Population *p)
         avrgq += q;
         if (ci->isValid()) {
             for (int k = 0; k < R; ++k) {
-                cost += m_sums[k] * m_sums[k] * ci->hasImperfection(k);
+                cost += ci->hasImperfection(k) * m_sums[k] * m_sums[k];
             }
             cost /= (float)R;
             cost = sqrtf(cost);

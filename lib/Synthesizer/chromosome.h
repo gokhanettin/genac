@@ -92,6 +92,7 @@ public:
     int hammingDistance(const Chromosome& other) const;
     int similarity(const Chromosome& other) const;
     QString toPrintable() const;
+    QString toCanonical() const;
 
     void fill();
 

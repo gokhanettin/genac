@@ -139,7 +139,6 @@ void GeneticSynthesizer::run(const QString& nreq, const QString& dreq,
         (*population)[0] = best;
         delete m_population;
         m_population = population;
-        std::sort(m_population->begin(), m_population->end(), lessThan);
     }
 }
 
@@ -155,8 +154,10 @@ void GeneticSynthesizer::select(Chromosome **parent1, Chromosome **parent2)
     case Rank:
         Selection::rank(m_population, parent1);
         (*parent1)->penalize();
+        std::sort(m_population->begin(), m_population->end(), lessThan);
         Selection::rank(m_population, parent2);
         (*parent2)->penalize();
+        std::sort(m_population->begin(), m_population->end(), lessThan);
         break;
     case Tournament:
         Selection::tournament(m_population, parent1);
@@ -199,12 +200,13 @@ void GeneticSynthesizer::mutate(Chromosome *c)
 
 void GeneticSynthesizer::save(const Chromosome *c, int gen)
 {
-    QString best = c->toPrintable();
-    if (!m_bests.contains(best)) {
+    QString canonical = c->toCanonical();
+    if (!m_bests.contains(canonical)) {
         m_saveStream << "********** " << gen << " **********\n"
+                     << "Canonical form: " << canonical << "\n"
                      << c->toNetlist() << "\n" << c->transferFunction() << "\n";
         m_saveStream.flush();
-        m_bests.insert(best);
+        m_bests.insert(canonical);
     }
 }
 
