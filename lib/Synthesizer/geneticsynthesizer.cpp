@@ -94,11 +94,13 @@ void GeneticSynthesizer::run(const QString& nreq, const QString& dreq,
     m_population = new Population;
     m_population->initialize(psize, ctype, cc, rc, true);
     Population *population = nullptr;
-    for (int n = 1; n <= generations; ++n) {
+    int n = 1;
+    while (true) {
         population = new Population;
         population->reserve(psize);
         m_estimator->setPopulationData(m_population);
         std::sort(m_population->begin(), m_population->end(), lessThan);
+        Chromosome *best = Chromosome::clone(*m_population->last());
         record(n);
         Chromosome *c = nullptr;
         qDebug() << "Generation: " << n;
@@ -110,7 +112,10 @@ void GeneticSynthesizer::run(const QString& nreq, const QString& dreq,
             qDebug() << c->toPrintable() << " ---> " << c->fitness();
             // qDebug().nospace().noquote() << c->transferFunction();
         }
-        Chromosome *best = Chromosome::clone(*m_population->last());
+        if (n == generations) {
+            delete m_population;
+            break;
+        }
         while (true) {
             Chromosome *parent1 = nullptr;
             Chromosome *parent2 = nullptr;
@@ -147,6 +152,7 @@ void GeneticSynthesizer::run(const QString& nreq, const QString& dreq,
         (*population)[0] = best;
         delete m_population;
         m_population = population;
+        ++n;
     }
 }
 
