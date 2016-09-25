@@ -242,7 +242,16 @@ Chromosome* Chromosome::canonicalize(const Chromosome& other)
     int len = other.size();
     int ilen = other.isize();
     int temp = 0;
+
     Chromosome *c = Chromosome::clone(other);
+    for(int i = 2; i < ilen; i+=2) {
+        if(c->at(i) < c->at(i-1)) {
+            temp = c->at(i);
+            (*c)[i] = c->at(i-1);
+            (*c)[i-1] = temp;
+        }
+    }
+
     QMap<int, int> nodes;
     int node = 0;
     for (int i = 0; i < ilen; ++i) {
@@ -256,14 +265,6 @@ Chromosome* Chromosome::canonicalize(const Chromosome& other)
             (*c)[i] = nodes.value(other.at(i));
         } else {
             (*c)[i] = nodes.value(other.at(other.at(i)));
-        }
-    }
-
-    for(int i = 2; i < ilen; i+=2) {
-        if(c->at(i) < c->at(i-1)) {
-            temp = c->at(i);
-            (*c)[i] = c->at(i-1);
-            (*c)[i-1] = temp;
         }
     }
 
