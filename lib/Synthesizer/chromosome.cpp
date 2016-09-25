@@ -241,6 +241,7 @@ Chromosome* Chromosome::canonicalize(const Chromosome& other)
     int nres = other.nresistors();
     int len = other.size();
     int ilen = other.isize();
+    int base = other.imax() + 1;
     int temp = 0;
 
     Chromosome *c = Chromosome::clone(other);
@@ -249,6 +250,33 @@ Chromosome* Chromosome::canonicalize(const Chromosome& other)
             temp = c->at(i);
             (*c)[i] = c->at(i-1);
             (*c)[i-1] = temp;
+        }
+    }
+
+    for (int i = 1; i < ncap; ++i) {
+        for (int j = 2; j < ncap*2; j+=2) {
+            if (c->at(j-1)*base + c->at(j) > c->at(j+1)*base + c->at(j+2)) {
+                temp = c->at(j+2);
+                (*c)[j+2] = c->at(j);
+                (*c)[j] = temp;
+
+                temp = c->at(j+1);
+                (*c)[j+1] = c->at(j-1);
+                (*c)[j-1] = temp;
+            }
+        }
+    }
+    for (int i = 1; i < nres; ++i) {
+        for (int j = ncap*2+2; j < (ncap+nres)*2; j+=2) {
+            if (c->at(j-1)*base + c->at(j) > c->at(j+1)*base + c->at(j+2)) {
+                temp = c->at(j+2);
+                (*c)[j+2] = c->at(j);
+                (*c)[j] = temp;
+
+                temp = c->at(j+1);
+                (*c)[j+1] = c->at(j-1);
+                (*c)[j-1] = temp;
+            }
         }
     }
 
@@ -268,31 +296,5 @@ Chromosome* Chromosome::canonicalize(const Chromosome& other)
         }
     }
 
-    for (int i = 1; i < ncap; ++i) {
-        for (int j = 2; j < ncap*2; j+=2) {
-            if (c->at(j-1)*ilen + c->at(j) > c->at(j+1)*ilen + c->at(j+2)) {
-                temp = c->at(j+2);
-                (*c)[j+2] = c->at(j);
-                (*c)[j] = temp;
-
-                temp = c->at(j+1);
-                (*c)[j+1] = c->at(j-1);
-                (*c)[j-1] = temp;
-            }
-        }
-    }
-    for (int i = 1; i < nres; ++i) {
-        for (int j = ncap*2+2; j < (ncap+nres)*2; j+=2) {
-            if (c->at(j-1)*ilen + c->at(j) > c->at(j+1)*ilen + c->at(j+2)) {
-                temp = c->at(j+2);
-                (*c)[j+2] = c->at(j);
-                (*c)[j] = temp;
-
-                temp = c->at(j+1);
-                (*c)[j+1] = c->at(j-1);
-                (*c)[j-1] = temp;
-            }
-        }
-    }
     return c;
 }
