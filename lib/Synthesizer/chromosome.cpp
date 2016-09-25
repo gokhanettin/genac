@@ -129,8 +129,6 @@ QString Chromosome::toPrintable() const
         str += QString::number(at(i));
         if (i < len - 1) {
             str += " ";
-        } else {
-            str + "\n";
         }
     }
     return str;
@@ -140,13 +138,11 @@ QString Chromosome::toCanonicalPrintable() const
 {
     Chromosome *c = Chromosome::canonicalize(*this);
     int len = size();
-    QString canonical;
+    QString canonical = "";
     for (int i = 0; i < len; ++i) {
         canonical += QString::number(c->at(i));
         if (i < len - 1) {
             canonical += " ";
-        } else {
-            canonical + "\n";
         }
     }
     delete c;
@@ -283,16 +279,16 @@ Chromosome* Chromosome::canonicalize(const Chromosome& other)
     QMap<int, int> nodes;
     int node = 0;
     for (int i = 0; i < ilen; ++i) {
-        if (!nodes.contains(other.at(i))) {
-            nodes.insert(other.at(i), node++);
+        if (!nodes.contains(c->at(i))) {
+            nodes.insert(c->at(i), node++);
         }
     }
 
     for (int i = 0; i < len; ++i) {
         if (i < ilen) {
-            (*c)[i] = nodes.value(other.at(i));
+            (*c)[i] = nodes.value(c->at(i));
         } else {
-            (*c)[i] = nodes.value(other.at(other.at(i)));
+            (*c)[i] = nodes.value(other.at(c->at(i)));
         }
     }
 
