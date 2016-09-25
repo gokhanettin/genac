@@ -72,10 +72,10 @@ void Estimator::setQuality(Chromosome *c)
         return;
     }
 
-    if (tf.rhs.is_zero() || tf.rhs.is_equal(m_inf) || tf.rhs.is_equal(1)) {
-        c->setQuality(BETA);
-        return;
-    }
+    // if (tf.rhs.is_zero() || tf.rhs.is_equal(m_inf) || tf.rhs.is_equal(1)) {
+    //     c->setQuality(BETA);
+    //     return;
+    // }
 
     int degree = reqsize / 2 - 1;
     GiNaC::ex numer, denom, coeff;
