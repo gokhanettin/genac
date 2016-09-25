@@ -111,7 +111,7 @@ void GeneticSynthesizer::run(const QString& nreq, const QString& dreq,
             // qDebug().nospace().noquote() << c->transferFunction();
         }
         Chromosome *best = Chromosome::clone(*m_population->last());
-        while (population->size() < psize) {
+        while (true) {
             Chromosome *parent1 = nullptr;
             Chromosome *parent2 = nullptr;
             Chromosome *child1 = nullptr;
@@ -132,8 +132,16 @@ void GeneticSynthesizer::run(const QString& nreq, const QString& dreq,
                 mutate(child1);
                 mutate(child2);
             }
-            population->append(child1);
-            population->append(child2);
+            if (population->size() < psize) {
+                population->append(child1);
+            } else {
+                break;
+            }
+            if (population->size() < psize) {
+                population->append(child2);
+            } else {
+                break;
+            }
         }
         delete (*population)[0];
         (*population)[0] = best;
@@ -200,7 +208,7 @@ void GeneticSynthesizer::mutate(Chromosome *c)
 
 void GeneticSynthesizer::save(const Chromosome *c, int gen)
 {
-    QString canonical = c->toCanonical();
+    QString canonical = c->toCanonicalPrintable();
     if (!m_bests.contains(canonical)) {
         m_saveStream << "********** " << gen << " **********\n"
                      << "Canonical form: " << canonical << "\n"

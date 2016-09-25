@@ -136,65 +136,10 @@ QString Chromosome::toPrintable() const
     return str;
 }
 
-QString Chromosome::toCanonical() const
+QString Chromosome::toCanonicalPrintable() const
 {
-    int ncap = ncapacitors();
-    int nres = nresistors();
+    Chromosome *c = Chromosome::canonicalize(*this);
     int len = size();
-    int ilen = isize();
-    int temp = 0;
-    Chromosome *c = Chromosome::clone(*this);
-    QMap<int, int> nodes;
-    int node = 0;
-    for (int i = 0; i < ilen; ++i) {
-        if (!nodes.contains(at(i))) {
-            nodes.insert(at(i), node++);
-        }
-    }
-
-    for (int i = 0; i < len; ++i) {
-        if (i < ilen) {
-            (*c)[i] = nodes.value(at(i));
-        } else {
-            (*c)[i] = nodes.value(at(at(i)));
-        }
-    }
-
-    for(int i = 2; i < ilen; i+=2) {
-        if(c->at(i) < c->at(i-1)) {
-            temp = c->at(i);
-            (*c)[i] = c->at(i-1);
-            (*c)[i-1] = temp;
-        }
-    }
-
-    for (int i = 1; i < ncap; ++i) {
-        for (int j = 2; j < ncap*2; j+=2) {
-            if (c->at(j-1)*ilen + c->at(j) > c->at(j+1)*ilen + c->at(j+2)) {
-                temp = c->at(j+2);
-                (*c)[j+2] = c->at(j);
-                (*c)[j] = temp;
-
-                temp = c->at(j+1);
-                (*c)[j+1] = c->at(j-1);
-                (*c)[j-1] = temp;
-            }
-        }
-    }
-    for (int i = 1; i < nres; ++i) {
-        for (int j = ncap*2+2; j < (ncap+nres)*2; j+=2) {
-            if (c->at(j-1)*ilen + c->at(j) > c->at(j+1)*ilen + c->at(j+2)) {
-                temp = c->at(j+2);
-                (*c)[j+2] = c->at(j);
-                (*c)[j] = temp;
-
-                temp = c->at(j+1);
-                (*c)[j+1] = c->at(j-1);
-                (*c)[j-1] = temp;
-            }
-        }
-    }
-
     QString canonical;
     for (int i = 0; i < len; ++i) {
         canonical += QString::number(c->at(i));
@@ -289,3 +234,64 @@ Chromosome* Chromosome::clone(const Chromosome& other)
     return c;
 }
 
+
+Chromosome* Chromosome::canonicalize(const Chromosome& other)
+{
+    int ncap = other.ncapacitors();
+    int nres = other.nresistors();
+    int len = other.size();
+    int ilen = other.isize();
+    int temp = 0;
+    Chromosome *c = Chromosome::clone(other);
+    QMap<int, int> nodes;
+    int node = 0;
+    for (int i = 0; i < ilen; ++i) {
+        if (!nodes.contains(other.at(i))) {
+            nodes.insert(other.at(i), node++);
+        }
+    }
+
+    for (int i = 0; i < len; ++i) {
+        if (i < ilen) {
+            (*c)[i] = nodes.value(other.at(i));
+        } else {
+            (*c)[i] = nodes.value(other.at(other.at(i)));
+        }
+    }
+
+    for(int i = 2; i < ilen; i+=2) {
+        if(c->at(i) < c->at(i-1)) {
+            temp = c->at(i);
+            (*c)[i] = c->at(i-1);
+            (*c)[i-1] = temp;
+        }
+    }
+
+    for (int i = 1; i < ncap; ++i) {
+        for (int j = 2; j < ncap*2; j+=2) {
+            if (c->at(j-1)*ilen + c->at(j) > c->at(j+1)*ilen + c->at(j+2)) {
+                temp = c->at(j+2);
+                (*c)[j+2] = c->at(j);
+                (*c)[j] = temp;
+
+                temp = c->at(j+1);
+                (*c)[j+1] = c->at(j-1);
+                (*c)[j-1] = temp;
+            }
+        }
+    }
+    for (int i = 1; i < nres; ++i) {
+        for (int j = ncap*2+2; j < (ncap+nres)*2; j+=2) {
+            if (c->at(j-1)*ilen + c->at(j) > c->at(j+1)*ilen + c->at(j+2)) {
+                temp = c->at(j+2);
+                (*c)[j+2] = c->at(j);
+                (*c)[j] = temp;
+
+                temp = c->at(j+1);
+                (*c)[j+1] = c->at(j-1);
+                (*c)[j-1] = temp;
+            }
+        }
+    }
+    return c;
+}

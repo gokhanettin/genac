@@ -8,8 +8,8 @@
 #include <cmath>
 #include "dbg.h"
 
-# define ALPHA (0.55f)
-# define BETA  (0.45f)
+# define ALPHA (0.60f)
+# define BETA  (0.40f)
 
 #define VALID_FUNC(cost)   (BETA + ALPHA / (1.0f + (float)(cost)))
 #define INVALID_FUNC(cost) (BETA / (1.0f + (float)(cost)))
@@ -112,8 +112,6 @@ void Estimator::setPopulationData(Population *p)
     float diversity = 0.0f;
     Chromosome *ci = nullptr;
     Chromosome *cj = nullptr;
-    // m_sums.clear();
-    // m_sums.resize(m_requirements.size());
     for (int i = 0; i < M-1; ++i) {
         ci = (*p)[i];
         for (int j = i + 1; j < M; ++j) {
@@ -153,7 +151,7 @@ void Estimator::setPopulationData(Population *p)
         avrgq += q;
         if (ci->isValid()) {
             for (int k = 0; k < R; ++k) {
-                cost += ci->hasImperfection(k) * m_sums[k] * m_sums[k];
+                cost += m_sums[k] * m_sums[k] * ci->hasImperfection(k);
             }
             cost /= (float)R;
             cost = sqrtf(cost);

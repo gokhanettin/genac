@@ -92,7 +92,7 @@ public:
     int hammingDistance(const Chromosome& other) const;
     int similarity(const Chromosome& other) const;
     QString toPrintable() const;
-    QString toCanonical() const;
+    QString toCanonicalPrintable() const;
 
     void fill();
 
@@ -108,6 +108,7 @@ public:
     static Chromosome* create(Type type, int ncapacitors, int nresistors,
                               const QVector<int>& IE);
     static Chromosome* clone(const Chromosome& other);
+    static Chromosome* canonicalize(const Chromosome& other);
 
 protected:
     Type m_type;
