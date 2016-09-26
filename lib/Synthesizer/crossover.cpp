@@ -66,17 +66,9 @@ void Crossover::uniform(const Chromosome *parent1, const Chromosome *parent2,
 void Crossover::singleGene(const Chromosome *parent1, const Chromosome *parent2,
                        Chromosome **child1, Chromosome **child2)
 {
-    int r = randomInt(0, parent1->size() - 1);
+    int r = randomInt(1, parent1->size() - 1);
     *child1 = Chromosome::clone(*parent1);
     *child2 = Chromosome::clone(*parent2);
     (**child1)[r] = parent2->at(r);
     (**child2)[r] = parent1->at(r);
-    (**child1).setTransferFunction(QString());
-    (**child2).setTransferFunction(QString());
-    (**child1).setQuality(0.0f);
-    (**child2).setQuality(0.0f);
-    (**child1).setFitness(0.0f);
-    (**child2).setFitness(0.0f);
-    (**child1).setImperfections(QVector<bool>());
-    (**child2).setImperfections(QVector<bool>());
 }
