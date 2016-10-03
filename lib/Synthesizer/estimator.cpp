@@ -5,7 +5,6 @@
 #include "Analyzer/circuit.h"
 #include "Analyzer/pretty.h"
 #include <cfloat>
-#include <cmath>
 #include "dbg.h"
 
 # define ALPHA (0.60f)
@@ -138,6 +137,7 @@ void Estimator::setPopulationData(Population *p)
     diversity /= (L * M * (M - 1)/2.0f);
     p->setDiversity(diversity);
     float cost = 0.0f;
+    int nimperfections = 0;
     float avrgq = 0.0f;
     float maxq = 0.0f;
     float q = 0.0f;
@@ -148,12 +148,14 @@ void Estimator::setPopulationData(Population *p)
             maxq = q;
         }
         cost = 0;
+        nimperfections = 0;
         avrgq += q;
         if (ci->isValid()) {
             for (int k = 0; k < R; ++k) {
                 cost += m_sums[k] * ci->hasImperfection(k);
+                nimperfections += ci->hasImperfection(k);
             }
-            cost /= (float)R;
+            cost *= (float)nimperfections/(R * R);
             ci->setFitness(VALID_FUNC(cost));
         } else {
             ci->setFitness(q);
