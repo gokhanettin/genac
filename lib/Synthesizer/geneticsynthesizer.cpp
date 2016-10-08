@@ -148,8 +148,17 @@ void GeneticSynthesizer::run(const QString& nreq, const QString& dreq,
                 break;
             }
         }
-        delete (*population)[0];
-        (*population)[0] = best;
+
+        int j = 0;
+        c = (*population)[j];
+        for (int i = 1; i < population->size(); ++i) {
+            if (lessThan((*population)[i], c)) {
+                j = i;
+                c = (*population)[j];
+            }
+        }
+        delete c;
+        (*population)[j] = best;
         delete m_population;
         m_population = population;
         ++n;
