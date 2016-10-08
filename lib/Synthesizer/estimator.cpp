@@ -147,7 +147,7 @@ void Estimator::setPopulationData(Population *p)
         if (q > maxq) {
             maxq = q;
         }
-        cost = 0;
+        cost = 0.0f;
         nimperfections = 0;
         avrgq += q;
         if (ci->isValid()) {
