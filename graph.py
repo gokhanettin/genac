@@ -16,7 +16,7 @@ import argparse
 # Parse arguments
 parser = argparse.ArgumentParser(description='Plot graphs of given csv files')
 parser.add_argument('files', metavar='N', type=str, nargs='+',
-                    help='files for plotting')
+                    help='file paths for plotting')
 parser.add_argument('-q', help='Plot average quality', action='store_true', required=False)
 parser.add_argument('-Q', help='Plot maximum quality', action='store_true', required=False)
 parser.add_argument('-f', help='Plot average fitness', action='store_true', required=False)
@@ -64,7 +64,7 @@ if len(args.files) == 4:
         for m in range(0, len(markers)):
             lines.append(*ax.plot(x, values[m], markers[m]))
 
-        ax.text(.5, .5,'(' + v + ')',
+        ax.text(.5, .9,'(' + v + ')',
         horizontalalignment='center',
         weight="bold",
         transform=ax.transAxes)
@@ -106,7 +106,7 @@ elif len(args.files) == 3:
         for m in range(0, len(markers)):
             lines.append(*ax.plot(x, values[m], markers[m]))
 
-        ax.text(.5,.5,'(' + v + ')',
+        ax.text(.5, .9,'(' + v + ')',
         horizontalalignment='center',
         weight="bold",
         transform=ax.transAxes)
@@ -148,14 +148,14 @@ elif len(args.files) == 2:
         for m in range(0, len(markers)):
             lines.append(*ax.plot(x, values[m], markers[m]))
 
-        ax.text(.5, .5,'(' + v + ')',
+        ax.text(.5, .9,'(' + v + ')',
         horizontalalignment='center',
         weight="bold",
         transform=ax.transAxes)
     fig.legend(lines, legends)
     plt.show()
 
-if len(args.files) == 1:
+elif len(args.files) == 1:
     fig, ax = plt.subplots(1, 1)
     legends = []
     markers = []
@@ -189,3 +189,7 @@ if len(args.files) == 1:
 
     fig.legend(lines, legends)
     plt.show()
+
+else:
+    print("number of allowed files [1, 4]")
+

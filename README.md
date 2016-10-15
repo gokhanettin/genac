@@ -56,6 +56,17 @@ $ src/genac genetic-synthesize \
 --mutation-probability 0.01 # if not provided, defaults to adaptive mutation probability.
 ```
 
+## Plot genetic algorithm records
+
+Here is an example plot:
+
+```
+./graph.py ~/Documents/ga-circuit-records/different-filters/run1-1/GARecords.txt \
+           ~/Documents/ga-circuit-records/different-filters/run2-3/GARecords.txt \
+           ~/Documents/ga-circuit-records/different-filters/run3-3/GARecords.txt \
+           ~/Documents/ga-circuit-records/different-filters/run4-1/GARecords.txt -f -F -d
+```
+
 [1]: ./samples
 [2]: https://www.swarthmore.edu/NatSci/echeeve1/Ref/mna/MNA1.html
 [3]: https://www.ginac.de/
