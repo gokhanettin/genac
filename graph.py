@@ -8,7 +8,7 @@ from __future__ import print_function
 # Import required modules in this notebook
 import numpy as np
 import matplotlib
-matplotlib.rc('legend', fontsize=11)
+matplotlib.rc('legend', fontsize=10)
 import matplotlib.pyplot as plt
 import csv
 import argparse
