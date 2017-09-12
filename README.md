@@ -1,5 +1,18 @@
 # GENAC
 
+## Introduction
+
+Genac is a symbolic analog circuit analyzer and synthesizer. Given a circuit in
+a specific netlist form ([see samples][1]) it can compute the transfer function
+of the circuit as a symbolic maths expression using [Modified Nodal Analysis
+(MNA)][2]. It can also generate circuits with some certain criteria through
+genetic algorithms. Genac uses [GiNaC][3] to do the symbolic maths for both
+analyzer and synthesizer modes.
+
+Genac was my final year project at the Department of Electrical and Electronics
+Engineering, 9 Eylul University. I refactor and improve it in my spare time, so
+do not expect too much from this project :)
+
 ## Build
 
 Minimum Qt 5.5.0 required.
@@ -42,3 +55,7 @@ $ src/genac genetic-synthesize \
 --crossover-probability 0.80 \
 --mutation-probability 0.01 # if not provided, defaults to adaptive mutation probability.
 ```
+
+[1]: ./samples
+[2]: https://www.swarthmore.edu/NatSci/echeeve1/Ref/mna/MNA1.html
+[3]: https://www.ginac.de/
