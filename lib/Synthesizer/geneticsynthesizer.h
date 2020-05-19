@@ -38,7 +38,7 @@ private:
     void mutate(Chromosome *c);
 
     void save(const Chromosome *c, int gen);
-    void record(int gen);
+    void record(int max_generations, int n);
 
     Estimator *m_estimator;
     SelectionType m_selectionType;

@@ -22,12 +22,14 @@ parser.add_argument('-Q', help='Plot maximum quality', action='store_true', requ
 parser.add_argument('-f', help='Plot average fitness', action='store_true', required=False)
 parser.add_argument('-F', help='Plot maximum fitness', action='store_true', required=False)
 parser.add_argument('-d', help='Plot diversity', action='store_true', required=False)
+parser.add_argument('-m', help='Mutation probability', action='store_true', required=False)
 
 args = parser.parse_args()
 
-allcolumns = [False, args.q, args.Q, args.f, args.F, args.d]
-alllegends = ['generation', 'average quality', 'max quality', 'average fitness', 'max fitness', 'diversity']
-allmarkers = ['*', '_', '--','-', '-.', ':']
+allcolumns = [False, args.q, args.Q, args.f, args.F, args.d, args.m]
+alllegends = ['generation', 'average quality', 'max quality', 'average fitness', 'max fitness',
+              'diversity', 'mutation probability']
+allmarkers = ['*', '_', '--','-', '-.', ':', '.']
 
 if len(args.files) == 4:
     fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)

@@ -13,7 +13,7 @@
 #define RECORDFILE "GARecords.txt"
 #define SAVEFILE   "GABests.txt"
 
-#define DIVERSITY_TO_MUTATION_P(d) (powf(M_E, (-10.0f*d)))
+#define ADAPTIVE_MUTATION_P(N, n, d) powf(0.5f, (4.0f * (n) / (N) + (d)))
 
 #define setChromosomeType(t, x)                    \
     do {                                           \
@@ -72,7 +72,7 @@ GeneticSynthesizer::GeneticSynthesizer()
         m_recordStream.setRealNumberPrecision(4);
         m_recordStream << "Generation;Avergage Quality;MaxQuality;"
                        << "Average Fitness;Max Fitness;"
-                       << "Diversity\n";
+                       << "Diversity;Mutation Probability" << "\n";
     }
 }
 
@@ -101,7 +101,7 @@ void GeneticSynthesizer::run(const QString& nreq, const QString& dreq,
         m_estimator->setPopulationData(m_population);
         std::sort(m_population->begin(), m_population->end(), lessThan);
         Chromosome *best = Chromosome::clone(*m_population->last());
-        record(n);
+        record(generations, n);
         Chromosome *c = nullptr;
         qDebug() << "Generation: " << n;
         for (int i = 0; i < m_population->size(); ++i) {
@@ -132,7 +132,8 @@ void GeneticSynthesizer::run(const QString& nreq, const QString& dreq,
                 child1 = Chromosome::clone(*parent1);
                 child2 = Chromosome::clone(*parent2);
             }
-            float mutp = adaptivem ? DIVERSITY_TO_MUTATION_P(m_population->diversity()) : mp;
+            float mutp = adaptivem ? ADAPTIVE_MUTATION_P(generations,
+                    n, m_population->diversity()) : mp;
             if (flip(mutp)) {
                 mutate(child1);
                 mutate(child2);
@@ -233,11 +234,14 @@ void GeneticSynthesizer::save(const Chromosome *c, int gen)
     }
 }
 
-void GeneticSynthesizer::record(int gen)
+void GeneticSynthesizer::record(int max_generations, int n)
 {
-    m_recordStream << gen
+    float diversity = m_population->diversity();
+
+    m_recordStream << n
                    << ";" << m_population->averageQuality() << ";" << m_population->maxQuality()
                    << ";" << m_population->averageFitness() << ";" << m_population->maxFitness()
-                   << ";" << m_population->diversity() << "\n";
+                   << ";" << diversity << ";"
+                   << ADAPTIVE_MUTATION_P(max_generations, n, diversity) << "\n";
     m_recordStream.flush();
 }
