@@ -45,6 +45,8 @@
             t = GeneticSynthesizer::CrossoverType::Uniform;       \
         } else if ((x) == "SINGLEGENE") {                         \
             t = GeneticSynthesizer::CrossoverType::SingleGene;    \
+        } else if ((x) == "MULTIGENE") {                          \
+            t = GeneticSynthesizer::CrossoverType::MultiGene;     \
         }                                                         \
     } while(0)
 
@@ -207,6 +209,9 @@ void GeneticSynthesizer::crossover(const Chromosome *parent1, const Chromosome *
         break;
     case SingleGene:
         Crossover::singleGene(parent1, parent2, child1, child2);
+        break;
+    case MultiGene:
+        Crossover::multiGene(parent1, parent2, child1, child2);
         break;
     }
 }

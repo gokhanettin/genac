@@ -91,10 +91,10 @@ void buildCommandLineParser(QCommandLineParser* parser, const QCoreApplication& 
                 QCoreApplication::translate("main", "The number of generations"),
                 QCoreApplication::translate("main", "number")},
             {"selection-type",
-                QCoreApplication::translate("main", "Perform selection with a given <type> ROULETTEWHEEL | RANK | TOURNAMENT. Default ROULETTEWHEEL."),
+                QCoreApplication::translate("main", "Perform selection with a given <type> ROULETTEWHEEL | TOURNAMENT | RANK. Default RANK."),
                 QCoreApplication::translate("main", "type")},
             {"crossover-type",
-                QCoreApplication::translate("main", "Perform crossover with a given <type> ONEPOINT | TWOPOINT | UNIFORM | SINGLEGENE. Default ONEPOINT."),
+                QCoreApplication::translate("main", "Perform crossover with a given <type> ONEPOINT | TWOPOINT | UNIFORM | SINGLEGENE | MULTIGENE. Default MULTIGENE."),
                 QCoreApplication::translate("main", "type")},
             {"crossover-probability",
                 QCoreApplication::translate("main", "Crossover probability."),
@@ -187,11 +187,11 @@ int runCommand(QCommandLineParser& parser, QCoreApplication& app)
         }
 
         if (selection.isEmpty()) {
-            selection = "ROULETTEWHEEL";
+            selection = "RANK";
         }
 
         if (xover.isEmpty()) {
-            xover = "ONEPOINT";
+            xover = "MULTIGENE";
         }
 
         return genetic_synthesize(nreq, dreq, active, psize,

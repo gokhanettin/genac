@@ -14,6 +14,8 @@ public:
                                 Chromosome **child1, Chromosome **child2);
     static void singleGene(const Chromosome *parent1, const Chromosome *parent2,
                                 Chromosome **child1, Chromosome **child2);
+    static void multiGene(const Chromosome *parent1, const Chromosome *parent2,
+                                Chromosome **child1, Chromosome **child2);
 };
 
 #endif // CROSSOVER_H

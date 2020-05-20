@@ -22,7 +22,8 @@ public:
         OnePoint,
         TwoPoint,
         Uniform,
-        SingleGene
+        SingleGene,
+        MultiGene
     };
 
     GeneticSynthesizer();
