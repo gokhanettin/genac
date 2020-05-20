@@ -16,6 +16,8 @@ void Mutation::fullyRandomized(Chromosome* c)
             (*c)[r] = randomInt(c->emin(), c->emax());
         }
     }
+
+    c->normalize();
 }
 
 void Mutation::shortCircuit(Chromosome* c)
@@ -29,6 +31,7 @@ void Mutation::shortCircuit(Chromosome* c)
    }
 
    (*c)[r1] = (*c)[r2];
+   c->normalize();
 }
 
 void Mutation::swap(Chromosome* c)
@@ -44,5 +47,6 @@ void Mutation::swap(Chromosome* c)
    int temp = (*c)[r1];
    (*c)[r1] = (*c)[r2];
    (*c)[r2] = temp;
+   c->normalize();
 }
 

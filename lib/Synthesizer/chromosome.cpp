@@ -134,21 +134,6 @@ QString Chromosome::toPrintable() const
     return str;
 }
 
-QString Chromosome::toCanonicalPrintable() const
-{
-    Chromosome *c = Chromosome::canonicalize(*this);
-    int len = size();
-    QString canonical = "";
-    for (int i = 0; i < len; ++i) {
-        canonical += QString::number(c->at(i));
-        if (i < len - 1) {
-            canonical += " ";
-        }
-    }
-    delete c;
-    return canonical;
-}
-
 Chromosome* Chromosome::create(Type type, int ncapacitors,
                                int nresistors, bool random)
 {
@@ -181,6 +166,8 @@ Chromosome* Chromosome::create(Type type, int ncapacitors,
             }
         }
     }
+
+    c->normalize();
     return c;
 }
 
@@ -205,6 +192,8 @@ Chromosome* Chromosome::create(Type type, int ncapacitors,
     for (int i = 0; i < IE.size(); ++i) {
         (*c)[i] = IE[i];
     }
+
+    c->normalize();
     return c;
 }
 
@@ -231,102 +220,68 @@ Chromosome* Chromosome::clone(const Chromosome& other)
 }
 
 
-Chromosome* Chromosome::canonicalize(const Chromosome& other)
+void Chromosome::normalize()
 {
-    int ncap = other.ncapacitors();
-    int nres = other.nresistors();
-    int len = other.size();
-    int ilen = other.isize();
-    int base = other.imax() + 1;
-    int temp = 0;
-
-    Chromosome *c = Chromosome::clone(other);
-    for(int i = 2; i < ilen; i+=2) {
-        if(c->at(i) < c->at(i-1)) {
-            temp = c->at(i);
-            (*c)[i] = c->at(i-1);
-            (*c)[i-1] = temp;
-        }
-    }
-
-    for (int i = 1; i < ncap; ++i) {
-        for (int j = 2; j < ncap*2; j+=2) {
-            if (c->at(j-1)*base + c->at(j) > c->at(j+1)*base + c->at(j+2)) {
-                temp = c->at(j+2);
-                (*c)[j+2] = c->at(j);
-                (*c)[j] = temp;
-
-                temp = c->at(j+1);
-                (*c)[j+1] = c->at(j-1);
-                (*c)[j-1] = temp;
-            }
-        }
-    }
-    for (int i = 1; i < nres; ++i) {
-        for (int j = ncap*2+2; j < (ncap+nres)*2; j+=2) {
-            if (c->at(j-1)*base + c->at(j) > c->at(j+1)*base + c->at(j+2)) {
-                temp = c->at(j+2);
-                (*c)[j+2] = c->at(j);
-                (*c)[j] = temp;
-
-                temp = c->at(j+1);
-                (*c)[j+1] = c->at(j-1);
-                (*c)[j-1] = temp;
-            }
-        }
-    }
-
-    QMap<int, int> nodes;
+    int ncap = ncapacitors();
+    int nres = nresistors();
+    int len = size();
+    int ilen = isize();
+    int base = imax() + 1;
     int node = 0;
+    QMap<int, int> map;
+    QVector<int> nodes(m_IE);
+
     for (int i = 0; i < ilen; ++i) {
-        if (!nodes.contains(c->at(i))) {
-            nodes.insert(c->at(i), node++);
+        if (!map.contains(nodes.at(i))) {
+            map.insert(nodes.at(i), node++);
         }
     }
 
     for (int i = 0; i < len; ++i) {
         if (i < ilen) {
-            (*c)[i] = nodes.value(c->at(i));
+            m_IE[i] = map.value(nodes.at(i));
         } else {
-            (*c)[i] = nodes.value(other.at(c->at(i)));
+            m_IE[i] = map.value(nodes.at(nodes.at(i)));
         }
     }
 
 
     for(int i = 2; i < ilen; i+=2) {
-        if(c->at(i) < c->at(i-1)) {
-            temp = c->at(i);
-            (*c)[i] = c->at(i-1);
-            (*c)[i-1] = temp;
+        if(m_IE.at(i) < m_IE.at(i-1)) {
+            int temp = m_IE.at(i);
+            m_IE[i] = m_IE.at(i-1);
+            m_IE[i-1] = temp;
         }
     }
 
     for (int i = 1; i < ncap; ++i) {
         for (int j = 2; j < ncap*2; j+=2) {
-            if (c->at(j-1)*base + c->at(j) > c->at(j+1)*base + c->at(j+2)) {
-                temp = c->at(j+2);
-                (*c)[j+2] = c->at(j);
-                (*c)[j] = temp;
+            if (m_IE.at(j-1)*base + m_IE.at(j) > m_IE.at(j+1)*base + m_IE.at(j+2)) {
+                int temp = m_IE.at(j+2);
+                m_IE[j+2] = m_IE.at(j);
+                m_IE[j] = temp;
 
-                temp = c->at(j+1);
-                (*c)[j+1] = c->at(j-1);
-                (*c)[j-1] = temp;
+                temp = m_IE.at(j+1);
+                m_IE[j+1] = m_IE.at(j-1);
+                m_IE[j-1] = temp;
             }
         }
     }
     for (int i = 1; i < nres; ++i) {
         for (int j = ncap*2+2; j < (ncap+nres)*2; j+=2) {
-            if (c->at(j-1)*base + c->at(j) > c->at(j+1)*base + c->at(j+2)) {
-                temp = c->at(j+2);
-                (*c)[j+2] = c->at(j);
-                (*c)[j] = temp;
+            if (m_IE.at(j-1)*base + m_IE.at(j) > m_IE.at(j+1)*base + m_IE.at(j+2)) {
+                int temp = m_IE.at(j+2);
+                m_IE[j+2] = m_IE.at(j);
+                m_IE[j] = temp;
 
-                temp = c->at(j+1);
-                (*c)[j+1] = c->at(j-1);
-                (*c)[j-1] = temp;
+                temp = m_IE.at(j+1);
+                m_IE[j+1] = m_IE.at(j-1);
+                m_IE[j-1] = temp;
             }
         }
     }
 
-    return c;
+    for (int i = isize(); i < size(); ++i) {
+        m_IE[i] = m_IE.indexOf(m_IE.at(i));
+    }
 }

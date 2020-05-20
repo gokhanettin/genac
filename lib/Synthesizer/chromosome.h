@@ -85,6 +85,8 @@ public:
     int at(int i) const {return m_IE.at(i);}
     int operator[](int i) const {return m_IE[i];}
     int& operator[](int i) {return m_IE[i];}
+    int indexOf(int node) const {return m_IE.indexOf(node);}
+
 
     int size() const;
     int inputNode() const;
@@ -92,9 +94,9 @@ public:
     int hammingDistance(const Chromosome& other) const;
     int similarity(const Chromosome& other) const;
     QString toPrintable() const;
-    QString toCanonicalPrintable() const;
 
     void fill();
+    void normalize();
 
     virtual int nOpenCircuits() const;
     virtual int nShortCircuits() const;
@@ -108,7 +110,6 @@ public:
     static Chromosome* create(Type type, int ncapacitors, int nresistors,
                               const QVector<int>& IE);
     static Chromosome* clone(const Chromosome& other);
-    static Chromosome* canonicalize(const Chromosome& other);
 
 protected:
     Type m_type;

@@ -229,13 +229,13 @@ void GeneticSynthesizer::mutate(Chromosome *c)
 
 void GeneticSynthesizer::save(const Chromosome *c, int gen)
 {
-    QString canonical = c->toCanonicalPrintable();
-    if (!m_bests.contains(canonical)) {
+    QString printable = c->toPrintable();
+    if (!m_bests.contains(printable)) {
         m_saveStream << "********** " << gen << " **********\n"
-                     << "Canonical form: " << canonical << "\n"
+                     << "Printable form: " << printable << "\n"
                      << c->toNetlist() << "\n" << c->transferFunction() << "\n";
         m_saveStream.flush();
-        m_bests.insert(canonical);
+        m_bests.insert(printable);
     }
 }
 
