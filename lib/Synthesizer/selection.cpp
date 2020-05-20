@@ -35,7 +35,7 @@ void Selection::rank(Population* population, Chromosome** parent)
     int sum = size * (size + 1) / 2;
     int r = randomInt(1, sum);
     int i = 1;
-    sum = 0.0f;
+    sum = 0;
     QList<Chromosome*>::Iterator it = population->begin();
     while (it != population->end()) {
         sum += i;
