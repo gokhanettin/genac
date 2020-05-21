@@ -21,13 +21,13 @@ void VoltageSource::stamp(Analyzer* a)
 
     if(idx[0] != 0)
     {
-        a->C(counter,idx[0]) = 1;
-        a->B(idx[0],counter) = 1;
+        a->C(counter,idx[0]) += 1;
+        a->B(idx[0],counter) += 1;
     }
     if(idx[1] != 0)
     {
-        a->C(counter,idx[1]) = -1;
-        a->B(idx[1],counter) = -1;
+        a->C(counter,idx[1]) += -1;
+        a->B(idx[1],counter) += -1;
     }
 
     a->J(counter) =
@@ -36,13 +36,13 @@ void VoltageSource::stamp(Analyzer* a)
     double val = value().toDouble(&ok);
     if(ok)
     {
-       a->E(counter) = val;
+       a->E(counter) += val;
     }
     else
     {
         GiNaC::realsymbol sym;
         a->makeSymbol(sym,value());
-        a->E(counter) = sym;
+        a->E(counter) += sym;
     }
 
 }

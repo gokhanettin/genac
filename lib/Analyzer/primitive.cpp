@@ -26,11 +26,8 @@ void Primitive::map(Mapper *parent)
     {
       case 'V':
       case 'E':
-      case 'F':
-        ++r->M();
-        break;
       case 'H':
-        r->M() += 2;
+        r->M() += 1;
         break;
     }
 }

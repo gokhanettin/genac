@@ -9,13 +9,15 @@ void VCCS::stamp(Analyzer* a)
     int len = nodes().size();
 
     if(len != 4)
-        qDebug() << "Error: Number of VCVS nodes is inconsistent!";
-
-    uint idx[len];
-    bool ok = true;
-    for(int i = 0; i<len; ++i)
     {
-        idx[i] = parent()->index(nodes().at(i),&ok);
+        qDebug() << "Error: Number of VCVS nodes is inconsistent!";
+    }
+
+    unsigned idx[len];
+    bool ok = true;
+    for(int i = 0; i < len; ++i)
+    {
+        idx[i] = parent()->index(nodes().at(i), &ok);
         if(!ok)
         {
             qDebug() << "Error: Unknown Node!";
@@ -54,7 +56,9 @@ void VCCS::stamp(Analyzer* a)
             a->G(idx[1],idx[2]) -= val;
         }
         else
+        {
             qDebug()<<"Error: Short circuit VCCS!";
+        }
     }
     else
     {
@@ -89,6 +93,8 @@ void VCCS::stamp(Analyzer* a)
             a->G(idx[1],idx[2]) -= val;
         }
         else
+        {
             qDebug()<<"Error: Short circuit VCCS!";
+        }
     }
 }

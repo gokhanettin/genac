@@ -1,3 +1,8 @@
-.SUBCKT OTRA 1 2 3 4
-F1 3 4 1 2 _inf
+.SUBCKT OTRA 1 2 3
+V_1 1 0 0
+V_2 2 0 0
+F_1 0 4 V_1 1
+F_2 0 4 V_2 -1
+*R_1 4 0 _inf
+E_1 3 0 4 0 1
 .ENDS

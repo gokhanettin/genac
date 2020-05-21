@@ -203,17 +203,18 @@ void Netlist::parser(QString* err, QTextStream& netStream, bool parseFlag,
                 }
                 break;
             case 'F':
-                if(tokens.size() == 6)
+                if(tokens.size() == 5)
                 {
                     QString name = tokens[0];
                     QStringList nodes;
-                    nodes << tokens[1] << tokens[2]<<tokens[3]<<tokens[4];
-                    QString value = tokens[5];
-                    ac->addComponent(new CCCS(name,nodes,value));
+                    nodes << tokens[1] << tokens[2];
+                    QString voltageName = tokens[3];
+                    QString value = tokens[4];
+                    ac->addComponent(new CCCS(name, nodes, voltageName, value));
                 }
                 else
                 {
-                    qDebug()<< "Error: F expects 6 parameters!";
+                    qDebug()<< "Error: F expects 5 parameters!";
                 }
                 break;
             case 'G':
@@ -231,17 +232,18 @@ void Netlist::parser(QString* err, QTextStream& netStream, bool parseFlag,
                 }
                 break;
             case 'H':
-                if(tokens.size() == 6)
+                if(tokens.size() == 5)
                 {
                     QString name = tokens[0];
                     QStringList nodes;
-                    nodes << tokens[1] << tokens[2]<<tokens[3]<<tokens[4];
-                    QString value = tokens[5];
-                    ac->addComponent(new CCVS(name,nodes,value));
+                    nodes << tokens[1] << tokens[2];
+                    QString voltageName = tokens[3];
+                    QString value = tokens[4];
+                    ac->addComponent(new CCVS(name, nodes, voltageName, value));
                 }
                 else
                 {
-                    qDebug()<< "Error: H expects 6 parameters!";
+                    qDebug()<< "Error: H expects 5 parameters!";
                 }
                 break;
             case 'X':

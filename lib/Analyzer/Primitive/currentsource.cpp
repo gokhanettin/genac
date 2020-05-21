@@ -17,9 +17,34 @@ void CurrentSource::stamp(Analyzer* a)
         }
     }
 
-    uint val = value().toUInt(&ok);
+    double num = value().toDouble(&ok);
     if(ok)
     {
+        GiNaC::numeric val(num);
+
+        if(idx[0] != 0 && idx[1] != 0)
+        {
+            a->I(idx[0]) -= val;
+            a->I(idx[1]) += val;
+        }
+        else if(idx[0] != 0)
+        {
+            a->I(idx[0]) -= val;
+        }
+        else if(idx[1] != 0)
+        {
+            a->I(idx[1]) += val;
+        }
+        else
+        {
+            qDebug() << "Error: Short circuit Indepentdent Current Source!";
+        }
+
+    }
+    else
+    {
+        GiNaC::realsymbol val;
+        a->makeSymbol(val, value());
         if(idx[0] != 0 && idx[1] != 0)
         {
             a->I(idx[0]) -= val;
@@ -34,7 +59,8 @@ void CurrentSource::stamp(Analyzer* a)
             a->I(idx[1]) -= val;
         }
         else
+        {
             qDebug() << "Error: Short circuit Indepentdent Current Source!";
-
+        }
     }
 }

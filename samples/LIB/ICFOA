@@ -1,5 +1,0 @@
-.SUBCKT ICFOA 1 2 3 4
-E1 1 inner_1 2 0 -1
-F1 3 0 inner_1 0 1
-E2 4 0 3 0 1
-.ENDS
