@@ -25,14 +25,11 @@ public:
 
     QString getIndexedNode(unsigned i)
     {
-        return m_map.key(i,QString("internal%1").arg(i));
+        return m_map.key(i, QString("hidden%1").arg(i));
     }
 
     void do_map();
     void do_stamp(Analyzer* a);
-#ifdef PRINTABLE_MAPABLES
-    void do_print() const;
-#endif
 
 private:
     unsigned m_N;

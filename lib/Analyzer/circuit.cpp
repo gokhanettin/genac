@@ -15,11 +15,3 @@ void Circuit::do_stamp(Analyzer* a)
         m_components[i]->stamp(a);
     }
 }
-
-#ifdef PRINTABLE_MAPABLES
-void Circuit::do_print() const
-{
-    for(int i = 0; i<m_components.size(); ++i)
-        m_components[i]->print();
-}
-#endif

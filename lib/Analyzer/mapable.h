@@ -11,9 +11,6 @@ public:
     virtual ~Mapable(){}
     virtual void map(Mapper* parent) = 0;
     virtual void stamp(Analyzer* a) = 0;
-#ifdef PRINTABLE_MAPABLES
-    virtual void print() = 0;
-#endif
 };
 
 #endif
