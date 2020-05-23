@@ -2,8 +2,8 @@
 #define OPAMPFILTERCHROMOSOME_H
 #include "chromosome.h"
 
-/* E[0]  : -
- * E[1]  : +
+/* E[0]  : +
+ * E[1]  : -
  * E[2]  : OUT
  * E[3]  : Vs
  * I[0]  : 0 (always GND)

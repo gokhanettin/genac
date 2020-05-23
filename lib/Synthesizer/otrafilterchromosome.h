@@ -2,9 +2,9 @@
 #define OTRAFILTERCHROMOSOME_H
 #include "chromosome.h"
 
-/* E[0]  : -
- * E[1]  : +
- * E[2]  : OUT
+/* E[0]  : p
+ * E[1]  : n
+ * E[2]  : z
  * E[3]  : Vs
  * I[0]  : 0 (always GND)
  * 0     : GND
