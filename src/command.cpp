@@ -82,7 +82,7 @@ void buildCommandLineParser(QCommandLineParser* parser, const QCoreApplication& 
                 QCoreApplication::translate("main", "Specify the number of resistors."),
                 QCoreApplication::translate("main", "number")},
             {"active-element",
-                QCoreApplication::translate("main", "Use given active element <type> OPAMP | OTRA. Default OPAMP."),
+                QCoreApplication::translate("main", "Use given active element <type> OPAMP | OTRA | CCII | CFOA. Default OPAMP."),
                 QCoreApplication::translate("main", "type")},
             {"population-size",
                 QCoreApplication::translate("main", "Population size in a generation."),

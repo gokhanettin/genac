@@ -17,6 +17,8 @@ public:
 
     virtual ~OtraFilterChromosome() =default;
 
+    virtual QString input() const;
+    virtual QString output() const;
     virtual QString toNetlist() const;
     virtual Circuit* toCircuit() const;
     virtual int esize() const;

@@ -13,6 +13,8 @@ set(libsynthesizer_SOURCES
     mutation.cpp
     opampfilterchromosome.cpp
     otrafilterchromosome.cpp
+    cciifilterchromosome.cpp
+    cfoafilterchromosome.cpp
     population.cpp
     selection.cpp
     utilities.cpp
@@ -27,6 +29,8 @@ set(libsynthesizer_HEADERS
   mutation.h
   opampfilterchromosome.h
   otrafilterchromosome.h
+  cciifilterchromosome.h
+  cfoafilterchromosome.h
   population.h
   selection.h
   utilities.h

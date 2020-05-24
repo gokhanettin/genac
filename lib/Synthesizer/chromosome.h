@@ -24,7 +24,9 @@ class Chromosome
 public:
     enum Type {
         OpampFilter,
-        OtraFilter
+        OtraFilter,
+        CciiFilter,
+        CfoaFilter
     };
 
     Chromosome(int ncapacitors, int nresistors);
@@ -89,8 +91,6 @@ public:
 
 
     int size() const;
-    int inputNode() const;
-    int outputNode() const;
     int hammingDistance(const Chromosome& other) const;
     int similarity(const Chromosome& other) const;
     QString toPrintable() const;
@@ -101,6 +101,8 @@ public:
     virtual int nOpenCircuits() const;
     virtual int nShortCircuits() const;
 
+    virtual QString input() const =0;
+    virtual QString output() const =0;
     virtual int esize() const =0;
     virtual Circuit* toCircuit() const =0;
     virtual QString toNetlist() const =0;

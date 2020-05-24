@@ -1,6 +1,8 @@
 #include "chromosome.h"
 #include "opampfilterchromosome.h"
 #include "otrafilterchromosome.h"
+#include "cciifilterchromosome.h"
+#include "cfoafilterchromosome.h"
 #include "utilities.h"
 #include <QtCore/QMap>
 #include <cmath>
@@ -13,19 +15,6 @@ Chromosome::Chromosome(int ncapacitors, int nresistors)
      m_penalty(0), m_quality(0.0f), m_fitness(0.0f)
 {
 }
-
-int Chromosome::inputNode() const
-{
-    CONST_SPLIT_IE(this);
-    return _CONST_I(_CONST_E(esize() - 1));
-}
-
-int Chromosome::outputNode() const
-{
-    CONST_SPLIT_IE(this);
-    return _CONST_I(_CONST_E(esize() - 2));
-}
-
 
 int Chromosome::size() const
 {
@@ -82,23 +71,6 @@ int Chromosome::nShortCircuits() const
         }
     }
 
-    // Short-circuit Vs
-    if (_CONST_I(_CONST_E(3)) == 0) {
-        ++cnt;
-    }
-
-    if(inputNode() == 0) {
-        ++cnt;
-    }
-
-    if(outputNode() == 0) {
-        ++cnt;
-    }
-
-    if(inputNode() == outputNode()) {
-        ++cnt;
-    }
-
     return cnt;
 }
 
@@ -145,50 +117,47 @@ Chromosome* Chromosome::create(Type type, int ncapacitors,
     case Chromosome::OtraFilter:
         c = new OtraFilterChromosome(ncapacitors, nresistors);
         break;
+    case Chromosome::CciiFilter:
+        c = new CciiFilterChromosome(ncapacitors, nresistors);
+        break;
+    case Chromosome::CfoaFilter:
+        c = new CfoaFilterChromosome(ncapacitors, nresistors);
+        break;
     }
 
     c->fill();
-    SPLIT_IE(c);
-    if (random){
+    if (random) {
+        SPLIT_IE(c);
         // Random generate
         for (int i = c->emin(); i < c->esize(); ++i) {
             _E(i) = randomInt(c->emin(), c->emax());
         }
         // _I(0) is always Ground
-        for(int i = 1; i <= c->isize(); ++i) {
+        for (int i = 1; i <= c->isize(); ++i) {
             _I(i) = randomInt(c->imin(), c->imax());
-            if(i%2 == 0 && _I(i) == _I(i-1)) {
-                if(_I(i) > 0) {
+            if (i % 2 == 0 && _I(i) == _I(i-1)) {
+                if (_I(i) > 0) {
                     _I(i) -= 1;
-                } else if(_I(i) < c->imax()) {
+                } else if (_I(i) < c->imax()) {
                     _I(i) += 1;
                 }
             }
         }
+        c->normalize();
     }
 
-    c->normalize();
     return c;
 }
 
 Chromosome* Chromosome::create(Type type, int ncapacitors,
                                int nresistors, const QVector<int>& IE)
 {
-    Chromosome *c = nullptr;
-    switch (type) {
-    case Chromosome::OpampFilter:
-        c = new OpampFilterChromosome(ncapacitors, nresistors);
-        break;
-    case Chromosome::OtraFilter:
-        c = new OtraFilterChromosome(ncapacitors, nresistors);
-        break;
-    }
+    Chromosome *c = Chromosome::create(type, ncapacitors, nresistors, false);
 
     Q_ASSERT_X(c->size() == IE.size(),
                "Chromosome::create",
                "IE vector and chromosome size don't agree");
 
-    c->fill();
     for (int i = 0; i < IE.size(); ++i) {
         (*c)[i] = IE[i];
     }
@@ -199,20 +168,11 @@ Chromosome* Chromosome::create(Type type, int ncapacitors,
 
 Chromosome* Chromosome::clone(const Chromosome& other)
 {
-    Chromosome *c = nullptr;
     Type type = other.type();
     int ncapacitors = other.ncapacitors();
     int nresistors  = other.nresistors();
-    switch (type) {
-    case Chromosome::OpampFilter:
-        c = new OpampFilterChromosome(ncapacitors, nresistors);
-        break;
-    case Chromosome::OtraFilter:
-        c = new OtraFilterChromosome(ncapacitors, nresistors);
-        break;
-    }
+    Chromosome *c = Chromosome::create(type, ncapacitors, nresistors, false);
 
-    c->fill();
     for (int i = 0; i < other.size(); ++i) {
         (*c)[i] = other[i];
     }

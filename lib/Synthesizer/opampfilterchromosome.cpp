@@ -14,6 +14,20 @@ OpampFilterChromosome::OpampFilterChromosome(int ncapacitors, int nresistors)
 }
 
 /*virtual*/
+QString OpampFilterChromosome::input() const
+{
+    CONST_SPLIT_IE(this);
+    return QString("V(%1)").arg(_CONST_I(_CONST_E(3)));
+}
+
+/*virtual*/
+QString OpampFilterChromosome::output() const
+{
+    CONST_SPLIT_IE(this);
+    return QString("V(%1)").arg(_CONST_I(_CONST_E(2)));
+}
+
+/*virtual*/
 QString OpampFilterChromosome::toNetlist() const
 {
     CONST_SPLIT_IE(this);
@@ -38,8 +52,7 @@ QString OpampFilterChromosome::toNetlist() const
         QString::number(_CONST_I(_CONST_E(2))) + " " + "OPAMP\n";
 
     str += ".LIB OPAMP\n";
-    str += QString(".TF V(%1) V(%2)\n")
-        .arg(QString::number(outputNode()), QString::number(inputNode()));
+    str += QString(".TF %1 %2\n").arg(output(), input());
     str += ".END";
     return str;
 }
@@ -93,10 +106,17 @@ int OpampFilterChromosome::nShortCircuits() const
     if (_CONST_I(_CONST_E(0)) == _CONST_I(_CONST_E(1))) {
         ++n;
     }
-    for (int i = 0; i < 3; ++i) {
-        if (_CONST_I(_CONST_E(i)) == _CONST_I(_CONST_E(3))) {
-            ++n;
-        }
+    if (_CONST_I(_CONST_E(0)) == _CONST_I(_CONST_E(3))) {
+        ++n;
+    }
+    if (_CONST_I(_CONST_E(1)) == _CONST_I(_CONST_E(3))) {
+        ++n;
+    }
+    if (_CONST_I(_CONST_E(2)) == _CONST_I(_CONST_E(3))) {
+        ++n;
+    }
+
+    for (int i = 0; i < esize(); ++i) {
         if (_CONST_I(_CONST_E(i)) == 0) {
             ++n;
         }

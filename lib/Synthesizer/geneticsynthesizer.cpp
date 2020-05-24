@@ -21,6 +21,10 @@
             t = Chromosome::OpampFilter;           \
         } else if ((x) == "OTRA") {                \
             t = Chromosome::OtraFilter;            \
+        } else if ((x) == "CCII") {                \
+            t = Chromosome::CciiFilter;           \
+        } else if ((x) == "CFOA") {                \
+            t = Chromosome::CfoaFilter;           \
         }                                          \
     } while(0)
 
@@ -112,7 +116,9 @@ void GeneticSynthesizer::run(const QString& nreq, const QString& dreq,
                 save(c, n);
             }
             qDebug() << c->toPrintable() << " ---> " << c->fitness();
-            // qDebug().nospace().noquote() << c->transferFunction();
+            qDebug().nospace().noquote() << c->toNetlist();
+            qDebug().nospace().noquote() << c->transferFunction();
+
         }
         if (n == generations) {
             delete m_population;

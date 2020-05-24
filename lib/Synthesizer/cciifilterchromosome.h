@@ -1,21 +1,21 @@
-#ifndef OPAMPFILTERCHROMOSOME_H
-#define OPAMPFILTERCHROMOSOME_H
+#ifndef CCIIFILTERCHROMOSOME_H
+#define CCIIFILTERCHROMOSOME_H
 #include "chromosome.h"
 
-/* E[0]  : +
- * E[1]  : -
- * E[2]  : OUT
+/* E[0]  : X
+ * E[1]  : Y
+ * E[2]  : Z
  * E[3]  : Vs
  * I[0]  : 0 (always GND)
  * 0     : GND
  */
 
-class OpampFilterChromosome : public Chromosome
+class CciiFilterChromosome : public Chromosome
 {
 public:
-    OpampFilterChromosome(int ncapacitors, int nresistors);
+    CciiFilterChromosome(int ncapacitors, int nresistors);
 
-    virtual ~OpampFilterChromosome() =default;
+    virtual ~CciiFilterChromosome() =default;
 
     virtual QString input() const;
     virtual QString output() const;
@@ -25,4 +25,4 @@ public:
     virtual int nShortCircuits() const;
 };
 
-#endif // OPAMPFILTERCHROMOSOME_H
+#endif // CCIIFILTERCHROMOSOME_H

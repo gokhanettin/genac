@@ -1,4 +1,4 @@
-#include "otrafilterchromosome.h"
+#include "cfoafilterchromosome.h"
 #include "Analyzer/circuit.h"
 #include "Analyzer/Primitive/cccs.h"
 #include "Analyzer/Primitive/vcvs.h"
@@ -8,34 +8,34 @@
 #include "utilities.h"
 #include <QtCore/QStringList>
 
-OtraFilterChromosome::OtraFilterChromosome(int ncapacitors, int nresistors)
+CfoaFilterChromosome::CfoaFilterChromosome(int ncapacitors, int nresistors)
     :Chromosome(ncapacitors, nresistors)
 {
-    m_type = Chromosome::OtraFilter;
+    m_type = Chromosome::CfoaFilter;
 }
 
 /*virtual*/
-QString OtraFilterChromosome::input() const
+QString CfoaFilterChromosome::input() const
+{
+    CONST_SPLIT_IE(this);
+    return QString("V(%1)").arg(_CONST_I(_CONST_E(4)));
+}
+
+/*virtual*/
+QString CfoaFilterChromosome::output() const
 {
     CONST_SPLIT_IE(this);
     return QString("V(%1)").arg(_CONST_I(_CONST_E(3)));
 }
 
 /*virtual*/
-QString OtraFilterChromosome::output() const
-{
-    CONST_SPLIT_IE(this);
-    return QString("V(%1)").arg(_CONST_I(_CONST_E(2)));
-}
-
-/*virtual*/
-QString OtraFilterChromosome::toNetlist() const
+QString CfoaFilterChromosome::toNetlist() const
 {
     CONST_SPLIT_IE(this);
     int ncapacitor = ncapacitors();
-    QString str = "Vs " + QString::number(_CONST_I(_CONST_E(3))) + " 0 Vs\n";
+    QString str = "Vs " + QString::number(_CONST_I(_CONST_E(4))) + " 0 Vs\n";
     for(int i = 2; i <= isize(); i += 2) {
-        int halfi = i/2;
+        int halfi = i / 2;
         if(halfi <= ncapacitor) {
             QString name = "C" + QString::number(halfi);
             str += name + " " +
@@ -50,9 +50,10 @@ QString OtraFilterChromosome::toNetlist() const
     }
     str += "X1 " + QString::number(_CONST_I(_CONST_E(0))) + " " +
         QString::number(_CONST_I(_CONST_E(1))) + " " +
-        QString::number(_CONST_I(_CONST_E(2))) + " " + "OTRA\n";
+        QString::number(_CONST_I(_CONST_E(2))) + " " +
+        QString::number(_CONST_I(_CONST_E(3))) + " " + "CFOA\n";
 
-    str += ".LIB OTRA\n";
+    str += ".LIB CFOA\n";
     str += QString(".TF %1 %2\n").arg(output(), input());
     str += ".END";
 
@@ -60,14 +61,14 @@ QString OtraFilterChromosome::toNetlist() const
 }
 
 /*virtual*/
-Circuit* OtraFilterChromosome::toCircuit() const
+Circuit* CfoaFilterChromosome::toCircuit() const
 {
     CONST_SPLIT_IE(this);
     int ncapacitor = ncapacitors();
     Circuit* cir = new Circuit();
     QStringList nodes;
 
-    nodes << QString::number(_CONST_I(_CONST_E(3))) << "0";
+    nodes << QString::number(_CONST_I(_CONST_E(4))) << "0";
     cir->addComponent(new VoltageSource("Vs", nodes, "Vs"));
 
     for(int i = 2; i <= isize(); i += 2) {
@@ -84,22 +85,22 @@ Circuit* OtraFilterChromosome::toCircuit() const
     }
 
     nodes.clear();
-    nodes << QString::number(_CONST_I(_CONST_E(0))) << "0";
-    cir->addComponent(new VoltageSource("V_X" ,nodes, "0"));
-
-    nodes.clear();
     nodes << QString::number(_CONST_I(_CONST_E(1))) << "0";
-    cir->addComponent(new VoltageSource("V_Y" ,nodes, "0"));
+    cir->addComponent(new Resistor("R_Y", nodes, "_inf"));
 
     nodes.clear();
-    nodes << "0" << "hidden";
-    cir->addComponent(new CCCS("F_X", nodes, "V_X", "1"));
-    cir->addComponent(new CCCS("F_Y", nodes, "V_Y", "-1"));
-    cir->addComponent(new Resistor("R_Z", nodes, "_inf"));
+    nodes << QString::number(_CONST_I(_CONST_E(0))) << "0"
+          << QString::number(_CONST_I(_CONST_E(1))) << "0";
+    cir->addComponent(new VCVS("E_X", nodes, "1"));
 
     nodes.clear();
-    nodes << QString::number(_CONST_I(_CONST_E((2)))) << "0" << "hidden" << "0";
-    cir->addComponent(new VCVS("E_Z", nodes, "1"));
+    nodes << "0" << QString::number(_CONST_I(_CONST_E(2)));
+    cir->addComponent(new CCCS("F_Z", nodes, "E_X", "1"));
+
+    nodes.clear();
+    nodes << QString::number(_CONST_I(_CONST_E(3))) << "0"
+          << QString::number(_CONST_I(_CONST_E(2))) << "0";
+    cir->addComponent(new VCVS("E_W", nodes, "1"));
 
     cir->do_map();
 
@@ -107,26 +108,29 @@ Circuit* OtraFilterChromosome::toCircuit() const
 }
 
 /*virtual*/
-int OtraFilterChromosome::esize() const
+int CfoaFilterChromosome::esize() const
 {
-    return 4;
+    return 5;
 }
 
 /*virtual*/
-int OtraFilterChromosome::nShortCircuits() const
+int CfoaFilterChromosome::nShortCircuits() const
 {
     CONST_SPLIT_IE(this);
     int n = Chromosome::nShortCircuits();
     if (_CONST_I(_CONST_E(0)) == _CONST_I(_CONST_E(1))) {
         ++n;
     }
-    if (_CONST_I(_CONST_E(0)) == _CONST_I(_CONST_E(3))) {
-        ++n;
-    }
-    if (_CONST_I(_CONST_E(1)) == _CONST_I(_CONST_E(3))) {
-        ++n;
-    }
     if (_CONST_I(_CONST_E(2)) == _CONST_I(_CONST_E(3))) {
+        ++n;
+    }
+    if (_CONST_I(_CONST_E(0)) == _CONST_I(_CONST_E(4))) {
+        ++n;
+    }
+    if (_CONST_I(_CONST_E(2)) == _CONST_I(_CONST_E(4))) {
+        ++n;
+    }
+    if (_CONST_I(_CONST_E(3)) == _CONST_I(_CONST_E(4))) {
         ++n;
     }
 

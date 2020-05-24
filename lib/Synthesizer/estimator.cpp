@@ -55,12 +55,8 @@ void Estimator::setQuality(Chromosome *c)
         m_analyzer->solve();
         delete circuit;
         circuit = nullptr;
-        QString out = QString("V(%1)").arg(QString::number(c->outputNode()));
-        QString in = QString("V(%1)").arg(QString::number(c->inputNode()));
-        tf = m_analyzer->calcTF(out, in);
+        tf = m_analyzer->calcTF(c->output(), c->input());
         c->setTransferFunction(pretty(tf));
-        // std::cout << c->toNetlist().toStdString() << std::endl
-        //          << c->transferFunction().toStdString() << std::endl;
     } catch (const std::exception &e) {
         delete circuit;
         circuit = nullptr;
