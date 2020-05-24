@@ -78,7 +78,7 @@ void Analyzer::solve()
     // print_matrix("A", *m_A);
     // print_matrix("x", *m_X);
     // print_matrix("z", *m_Z);
-    m_result = m_A->solve(*m_X,*m_Z, GiNaC::solve_algo::gauss);
+    m_result = m_A->solve(*m_X,*m_Z, GiNaC::solve_algo::automatic);
     // print_matrix("solution", m_result);
 }
 
