@@ -23,9 +23,9 @@ public:
     void parse(QString* err,const QString& filepath,const QString& libDir = QString());
     Circuit* circuit() const;
     const QList<QStringList>& tfs() const{return m_tfs;}
+      void parser(QString* err, QTextStream& netStream, bool parseFlag,
+                  AbstractCircuit *ac = 0,const QString& libDir = QString());
 private:
-  void parser(QString* err, QTextStream& netStream, bool parseFlag,
-              AbstractCircuit *ac = 0,const QString& libDir = QString());
     OperatorType opType(const QString& str);
     Circuit* m_circuit;
     QList<QStringList> m_tfs;

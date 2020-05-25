@@ -14,10 +14,9 @@
 
 class Circuit;
 
-// I-type terminals: Ground terminal of the independent
-// voltage source + passive elements' terminals.
-// E-type terminals: Positive terminal of the independent
-// voltage source + active element's terminals.
+// I-type terminals: Ground and passive elements' terminals.
+// E-type terminals: Terminal of the independent
+// source and active element's terminals.
 
 class Chromosome
 {
@@ -104,7 +103,6 @@ public:
     virtual QString input() const =0;
     virtual QString output() const =0;
     virtual int esize() const =0;
-    virtual Circuit* toCircuit() const =0;
     virtual QString toNetlist() const =0;
 
     static Chromosome* create(Type type, int ncapacitors, int nresistors,

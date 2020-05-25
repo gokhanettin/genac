@@ -1,11 +1,12 @@
 #include "estimator.h"
 #include "chromosome.h"
 #include "population.h"
+#include "dbg.h"
+#include "Analyzer/netlist.h"
 #include "Analyzer/analyzer.h"
 #include "Analyzer/circuit.h"
 #include "Analyzer/pretty.h"
 #include <cfloat>
-#include "dbg.h"
 
 # define ALPHA (0.60f)
 # define BETA  (0.40f)
@@ -48,24 +49,32 @@ void Estimator::setQuality(Chromosome *c)
         c->setTransferFunction("Has Open or Short Elements");
         return;
     }
-    Circuit *circuit = c->toCircuit();
+
+    Netlist netlist;
+    QString err = "";
+    QString str = c->toNetlist();
+    QTextStream stream(&str);
+    netlist.parser(&err, stream, false, 0);
+    Circuit *circuit = netlist.circuit();
+    circuit->do_map();
     m_analyzer->stamp(circuit);
     Analyzer::TransferFunction tf;
     try {
         m_analyzer->solve();
-        delete circuit;
-        circuit = nullptr;
-        tf = m_analyzer->calcTF(c->output(), c->input());
+        tf = m_analyzer->calcTF(c->output(),
+                                c->input());
         c->setTransferFunction(pretty(tf));
-    } catch (const std::exception &e) {
         delete circuit;
         circuit = nullptr;
+    } catch (const std::exception &e) {
         ++m_nexception;
         qDebug() << QString::fromStdString(e.what())
                  << " exception: " << m_nexception
                  << " " << c->toPrintable();
         c->setQuality(FLT_EPSILON);
         c->setTransferFunction("Makes an inconsistent matrix");
+        delete circuit;
+        circuit = nullptr;
         return;
     }
 

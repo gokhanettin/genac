@@ -51,45 +51,12 @@ QString OpampFilterChromosome::toNetlist() const
         QString::number(_CONST_I(_CONST_E(1))) + " " +
         QString::number(_CONST_I(_CONST_E(2))) + " " + "OPAMP\n";
 
-    str += ".LIB OPAMP\n";
+    str += QString(".SUBCKT OPAMP 1 2 3\n") +
+           QString("E_X 3 0 1 2 _inf\n") +
+           QString(".ENDS\n");
     str += QString(".TF %1 %2\n").arg(output(), input());
     str += ".END";
     return str;
-}
-
-/*virtual*/
-Circuit* OpampFilterChromosome::toCircuit() const
-{
-    CONST_SPLIT_IE(this);
-    int ncapacitor = ncapacitors();
-    Circuit* cir = new Circuit();
-    QStringList nodes;
-
-    nodes << QString::number(_CONST_I(_CONST_E(3))) << "0";
-    cir->addComponent(new VoltageSource("Vs", nodes, "Vs"));
-    nodes.clear();
-
-    nodes << QString::number(_CONST_I(_CONST_E((2)))) << "0"
-          << QString::number(_CONST_I(_CONST_E((0))))
-          << QString::number(_CONST_I(_CONST_E(1)));
-    cir->addComponent(new VCVS("E_X",nodes,"_inf"));
-
-    for(int i = 2; i < isize(); i += 2) {
-        int halfi = i/2;
-        nodes.clear();
-        nodes << QString::number(_CONST_I(i-1)) << QString::number(_CONST_I(i));
-        if(halfi <= ncapacitor) {
-            QString name = "C" + QString::number(halfi);
-            cir->addComponent(new Capacitor(name, nodes, name));
-        } else {
-            QString name = "R" + QString::number(halfi - ncapacitor);
-            cir->addComponent(new Resistor(name, nodes, name));
-        }
-    }
-
-    cir->do_map();
-
-    return cir;
 }
 
 /*virtual*/

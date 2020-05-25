@@ -52,59 +52,16 @@ QString CfoaFilterChromosome::toNetlist() const
         QString::number(_CONST_I(_CONST_E(1))) + " " +
         QString::number(_CONST_I(_CONST_E(2))) + " " +
         QString::number(_CONST_I(_CONST_E(3))) + " " + "CFOA\n";
-
-    str += ".LIB CFOA\n";
+    str += QString(".SUBCKT CFOA 1 2 3 4\n") +
+           QString("R_Y 2 0 _inf\n") +
+           QString("E_X 1 0 2 0 1\n") +
+           QString("F_Z 0 3 E_X 1\n") +
+           QString("E_W 4 0 3 0 1\n") +
+           QString(".ENDS\n");
     str += QString(".TF %1 %2\n").arg(output(), input());
     str += ".END";
 
     return str;
-}
-
-/*virtual*/
-Circuit* CfoaFilterChromosome::toCircuit() const
-{
-    CONST_SPLIT_IE(this);
-    int ncapacitor = ncapacitors();
-    Circuit* cir = new Circuit();
-    QStringList nodes;
-
-    nodes << QString::number(_CONST_I(_CONST_E(4))) << "0";
-    cir->addComponent(new VoltageSource("Vs", nodes, "Vs"));
-
-    for(int i = 2; i <= isize(); i += 2) {
-        int halfi = i/2;
-        nodes.clear();
-        nodes << QString::number(_CONST_I(i-1)) << QString::number(_CONST_I(i));
-        if(halfi <= ncapacitor) {
-            QString name = "C" + QString::number(halfi);
-            cir->addComponent(new Capacitor(name, nodes, name));
-        } else {
-            QString name = "R" + QString::number(halfi - ncapacitor);
-            cir->addComponent(new Resistor(name, nodes, name));
-        }
-    }
-
-    nodes.clear();
-    nodes << QString::number(_CONST_I(_CONST_E(1))) << "0";
-    cir->addComponent(new Resistor("R_Y", nodes, "_inf"));
-
-    nodes.clear();
-    nodes << QString::number(_CONST_I(_CONST_E(0))) << "0"
-          << QString::number(_CONST_I(_CONST_E(1))) << "0";
-    cir->addComponent(new VCVS("E_X", nodes, "1"));
-
-    nodes.clear();
-    nodes << "0" << QString::number(_CONST_I(_CONST_E(2)));
-    cir->addComponent(new CCCS("F_Z", nodes, "E_X", "1"));
-
-    nodes.clear();
-    nodes << QString::number(_CONST_I(_CONST_E(3))) << "0"
-          << QString::number(_CONST_I(_CONST_E(2))) << "0";
-    cir->addComponent(new VCVS("E_W", nodes, "1"));
-
-    cir->do_map();
-
-    return cir;
 }
 
 /*virtual*/
