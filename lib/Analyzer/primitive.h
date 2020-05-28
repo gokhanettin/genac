@@ -17,9 +17,6 @@ public:
 
     //Other functions
     virtual void map(Mapper* parent);
-#ifdef PRINTABLE_MAPABLES
-    virtual void print();
-#endif
 protected:
     QString m_value;
 };

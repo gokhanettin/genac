@@ -67,18 +67,6 @@ void X::map(Mapper *parent)
         prototype()->componentAt(i)->map(this);
 }
 
-
-#ifdef PRINTABLE_MAPABLES
-void X::print()
-{
-    for(int i = 0; i<prototype()->numberOfComponents(); ++i)
-    {
-        prototype()->componentAt(i)->setParent(this);
-        prototype()->componentAt(i)->print();
-    }
-}
-#endif
-
 Circuit* X::getRoot()
 {
     return root();

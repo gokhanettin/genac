@@ -31,19 +31,3 @@ void Primitive::map(Mapper *parent)
         break;
     }
 }
-
-#ifdef PRINTABLE_MAPABLES
-void Primitive::print()
-{
-    bool exists = false;
-    qDebug() << name();
-    for(int i = 0; i<nodes().size(); ++i)
-    {
-        qDebug()<< nodes().at(i)<<" --> "<<parent()->index(nodes().at(i),&exists);
-        if(!exists)
-            qDebug() << "Error: Unknown node "<<nodes().at(i);
-    }
-
-    qDebug() << "---------------------------";
-}
-#endif

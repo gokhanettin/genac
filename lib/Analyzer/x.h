@@ -26,9 +26,6 @@ public:
     //From Mapable
     virtual void stamp(Analyzer *a);
     virtual void map(Mapper *parent);
-#ifdef PRINTABLE_MAPABLES
-    virtual void print();
-#endif
 
     //From Mapper
     virtual Circuit* getRoot();
