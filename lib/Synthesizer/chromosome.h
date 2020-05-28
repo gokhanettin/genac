@@ -100,8 +100,6 @@ public:
     virtual int nOpenCircuits() const;
     virtual int nShortCircuits() const;
 
-    virtual QString input() const =0;
-    virtual QString output() const =0;
     virtual int esize() const =0;
     virtual QString toNetlist() const =0;
 

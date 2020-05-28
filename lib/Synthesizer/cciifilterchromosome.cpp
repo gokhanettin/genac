@@ -16,20 +16,6 @@ CciiFilterChromosome::CciiFilterChromosome(int ncapacitors, int nresistors)
 }
 
 /*virtual*/
-QString CciiFilterChromosome::input() const
-{
-    CONST_SPLIT_IE(this);
-    return "I(V1)";
-}
-
-/*virtual*/
-QString CciiFilterChromosome::output() const
-{
-    CONST_SPLIT_IE(this);
-    return "I(V2)";
-}
-
-/*virtual*/
 QString CciiFilterChromosome::toNetlist() const
 {
     CONST_SPLIT_IE(this);
@@ -61,7 +47,7 @@ QString CciiFilterChromosome::toNetlist() const
            QString("E_X 1 0 2 0 1\n") +
            QString("F_Z 0 3 E_X 1\n") +
            QString(".ENDS\n");
-    str += QString(".TF %1 %2\n").arg(output(), input());
+    str += QString(".TF I(V2) I(V1)\n");
     str += ".END";
 
     return str;

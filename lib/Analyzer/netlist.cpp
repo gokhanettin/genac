@@ -12,41 +12,19 @@
 #include "Primitive/ccvs.h"
 #include "Primitive/vcvs.h"
 #include "Primitive/vccs.h"
+#include "dbg.h"
 #include <QtCore/QStringList>
 #include <QtCore/QFile>
 #include <QtCore/QIODevice>
 #include <QtCore/QTextStream>
-#include "dbg.h"
+#include <QDir>
 
 
-
-Netlist::Netlist()
-    :m_circuit(new Circuit())
-{}
-
-void Netlist::parse(QString* err,const QString& filepath, const QString& libDir)
+void Netlist::parse(QTextStream & stream, const QString & libDir)
 {
-    QFile file(filepath);
-    if(file.exists())
-    {
-       if(file.open(QIODevice::ReadOnly | QIODevice::Text))
-       {
-           QTextStream stream(&file);
-           err->clear();
-           parser(err, stream, true, 0, libDir);
-       }
-       if(err->isEmpty()){ //No error occured.
-            m_circuit->do_map();
-       }
-    }
-    else{
-        *err = "Netlist file '" + filepath + "' not found!";
-    }
-}
-
-Circuit* Netlist::circuit() const
-{
-   return m_circuit;
+    parse(stream, libDir, false, &m_circuit);
+    // TODO: Make sure pare is ok.
+    m_circuit.do_map();
 }
 
 Netlist::OperatorType Netlist::opType(const QString& str)
@@ -70,28 +48,26 @@ Netlist::OperatorType Netlist::opType(const QString& str)
     return static_cast<OperatorType>(i);
 }
 
-void Netlist::parser(QString* err, QTextStream& netStream, bool parseFlag,
-                     AbstractCircuit *ac,const QString& libDir)
+void Netlist::parse(QTextStream& stream, const QString& libDir,
+                    bool isLib, AbstractCircuit *circuit)
 {
 
-    if(!ac)
-        ac = m_circuit;
+    if(!circuit)
+        circuit = &m_circuit;
 
 
-    if(netStream.atEnd())
+    if(stream.atEnd())
     {
-        if(parseFlag){
-            if(m_stack.size() != 1 || m_stack.pop() != END)
-            {
-                qDebug() << "Netlist must end with .END";
-            }
+        if(m_stack.size() != 1 || m_stack.pop() != END)
+        {
+            qDebug() << "Netlist must end with .END";
         }
 
-            return;
+        return;
     }
     else
     {
-        QString line = netStream.readLine().trimmed();
+        QString line = stream.readLine().trimmed();
 
         if(!line.isEmpty() && line.at(0) != '*')
         {
@@ -105,7 +81,7 @@ void Netlist::parser(QString* err, QTextStream& netStream, bool parseFlag,
                     QStringList nodes;
                     nodes << tokens[1] << tokens[2];
                     QString value = tokens[3];
-                    ac->addComponent(new Y(name,nodes,value));
+                    circuit->addComponent(new Y(name,nodes,value));
                 }
                 else
                 {
@@ -120,7 +96,7 @@ void Netlist::parser(QString* err, QTextStream& netStream, bool parseFlag,
                     QStringList nodes;
                     nodes << tokens[1] << tokens[2];
                     QString value = tokens[3];
-                    ac->addComponent(new Resistor(name,nodes,value));
+                    circuit->addComponent(new Resistor(name,nodes,value));
                 }
                 else
                 {
@@ -135,7 +111,7 @@ void Netlist::parser(QString* err, QTextStream& netStream, bool parseFlag,
                     QStringList nodes;
                     nodes << tokens[1] << tokens[2];
                     QString value = tokens[3];
-                    ac->addComponent(new Capacitor(name,nodes,value));
+                    circuit->addComponent(new Capacitor(name,nodes,value));
                 }
                 else
                 {
@@ -150,7 +126,7 @@ void Netlist::parser(QString* err, QTextStream& netStream, bool parseFlag,
                     QStringList nodes;
                     nodes << tokens[1] << tokens[2];
                     QString value = tokens[3];
-                    ac->addComponent(new Inductor(name,nodes,value));
+                    circuit->addComponent(new Inductor(name,nodes,value));
                 }
                 else
                 {
@@ -165,7 +141,7 @@ void Netlist::parser(QString* err, QTextStream& netStream, bool parseFlag,
                     QStringList nodes;
                     nodes << tokens[1] << tokens[2];
                     QString value = tokens[3];
-                    ac->addComponent(new VoltageSource(name,nodes,value));
+                    circuit->addComponent(new VoltageSource(name,nodes,value));
                 }
                 else
                 {
@@ -180,7 +156,7 @@ void Netlist::parser(QString* err, QTextStream& netStream, bool parseFlag,
                     QStringList nodes;
                     nodes << tokens[1] << tokens[2];
                     QString value = tokens[3];
-                    ac->addComponent(new CurrentSource(name,nodes,value));
+                    circuit->addComponent(new CurrentSource(name,nodes,value));
                 }
                 else
                 {
@@ -195,7 +171,7 @@ void Netlist::parser(QString* err, QTextStream& netStream, bool parseFlag,
                     QStringList nodes;
                     nodes << tokens[1] << tokens[2]<<tokens[3]<<tokens[4];
                     QString value = tokens[5];
-                    ac->addComponent(new VCVS(name,nodes,value));
+                    circuit->addComponent(new VCVS(name,nodes,value));
                 }
                 else
                 {
@@ -210,7 +186,7 @@ void Netlist::parser(QString* err, QTextStream& netStream, bool parseFlag,
                     nodes << tokens[1] << tokens[2];
                     QString voltageName = tokens[3];
                     QString value = tokens[4];
-                    ac->addComponent(new CCCS(name, nodes, voltageName, value));
+                    circuit->addComponent(new CCCS(name, nodes, voltageName, value));
                 }
                 else
                 {
@@ -224,7 +200,7 @@ void Netlist::parser(QString* err, QTextStream& netStream, bool parseFlag,
                     QStringList nodes;
                     nodes << tokens[1] << tokens[2]<<tokens[3]<<tokens[4];
                     QString value = tokens[5];
-                    ac->addComponent(new VCCS(name,nodes,value));
+                    circuit->addComponent(new VCCS(name,nodes,value));
                 }
                 else
                 {
@@ -239,7 +215,7 @@ void Netlist::parser(QString* err, QTextStream& netStream, bool parseFlag,
                     nodes << tokens[1] << tokens[2];
                     QString voltageName = tokens[3];
                     QString value = tokens[4];
-                    ac->addComponent(new CCVS(name, nodes, voltageName, value));
+                    circuit->addComponent(new CCVS(name, nodes, voltageName, value));
                 }
                 else
                 {
@@ -256,7 +232,7 @@ void Netlist::parser(QString* err, QTextStream& netStream, bool parseFlag,
                         nodes << tokens[i];
                     }
                     QString protoName = tokens[tokens.size()-1];
-                    ac->addComponent(new X(name,nodes,protoName));
+                    circuit->addComponent(new X(name,nodes,protoName));
                 }
                 else
                 {
@@ -277,9 +253,9 @@ void Netlist::parser(QString* err, QTextStream& netStream, bool parseFlag,
                     {
                         nodes << tokens.at(i);
                     }
-                    Subcircuit* sub = new Subcircuit(name,nodes);
-                    ac->addSubcircuit(sub);
-                    parser(err, netStream, parseFlag, sub, libDir);
+                    Subcircuit* subcircuit = new Subcircuit(name,nodes);
+                    circuit->addSubcircuit(subcircuit);
+                    parse(stream, libDir, isLib, subcircuit);
                 }
                     break;
                 case ENDS:
@@ -291,26 +267,23 @@ void Netlist::parser(QString* err, QTextStream& netStream, bool parseFlag,
                     break;
                 case LIB:
                 {
-                    if(tokens.size() > 2) {
-                        *err = ".LIB expects two tokens only.";
+                    if(tokens.size() != 2) {
+                        qDebug(".LIB expects exactly two tokens.");
                         return;
                     }
                     if (libDir.isEmpty()) {
-                        *err = "No Library path specified";
+                        qDebug("No Library path specified");
                         return;
                     }
-                    QString libd = libDir;
-                    if (libDir.at(libDir.size() - 1) !=  '/') {
-                        libd += QString("/");
-                    }
 
-                    QFile libFile(libd + tokens[1]);
+                    QString libFilePath = QDir(libDir).filePath(tokens[1]);
+                    QFile libFile(libFilePath);
                     if(libFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
                         QTextStream libStream(&libFile);
-                        parser(err, libStream, false, ac, libd);
+                        parse(libStream, libDir, true, circuit);
                     }
                     else {
-                        *err = libd + tokens[1] + " does not exist!";
+                        qDebug() << libFilePath << "does not exist!";
                         return;
                     }
                 }
@@ -319,7 +292,7 @@ void Netlist::parser(QString* err, QTextStream& netStream, bool parseFlag,
                 {
                     QStringList l;
                     l<<tokens.at(1)<<tokens.at(2);
-                    m_tfs.append(l);
+                    m_transferFunctions.append(l);
 
                 }
                 break;
@@ -337,6 +310,6 @@ void Netlist::parser(QString* err, QTextStream& netStream, bool parseFlag,
             }
         }
 
-        parser(err, netStream, parseFlag, ac, libDir);
+        parse(stream, libDir, isLib, circuit);
     }
 }

@@ -14,20 +14,6 @@ OpampFilterChromosome::OpampFilterChromosome(int ncapacitors, int nresistors)
 }
 
 /*virtual*/
-QString OpampFilterChromosome::input() const
-{
-    CONST_SPLIT_IE(this);
-    return QString("V(%1)").arg(_CONST_I(_CONST_E(3)));
-}
-
-/*virtual*/
-QString OpampFilterChromosome::output() const
-{
-    CONST_SPLIT_IE(this);
-    return QString("V(%1)").arg(_CONST_I(_CONST_E(2)));
-}
-
-/*virtual*/
 QString OpampFilterChromosome::toNetlist() const
 {
     CONST_SPLIT_IE(this);
@@ -54,7 +40,8 @@ QString OpampFilterChromosome::toNetlist() const
     str += QString(".SUBCKT OPAMP 1 2 3\n") +
            QString("E_X 3 0 1 2 _inf\n") +
            QString(".ENDS\n");
-    str += QString(".TF %1 %2\n").arg(output(), input());
+    str += QString(".TF V(%1) V(%2)\n").arg(_CONST_I(_CONST_E(2)))
+                                       .arg(_CONST_I(_CONST_E(3)));
     str += ".END";
     return str;
 }

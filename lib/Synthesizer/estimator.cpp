@@ -51,21 +51,16 @@ void Estimator::setQuality(Chromosome *c)
     }
 
     Netlist netlist;
-    QString err = "";
-    QString str = c->toNetlist();
-    QTextStream stream(&str);
-    netlist.parser(&err, stream, false, 0);
-    Circuit *circuit = netlist.circuit();
-    circuit->do_map();
+    QString netlistString = c->toNetlist();
+    QTextStream stream(&netlistString);
+    netlist.parse(stream);
+    Circuit *circuit = &netlist.circuit();
     m_analyzer->stamp(circuit);
     Analyzer::TransferFunction tf;
     try {
         m_analyzer->solve();
-        tf = m_analyzer->calcTF(c->output(),
-                                c->input());
+        tf = m_analyzer->calcTFs(netlist.transferFunctions())[0];
         c->setTransferFunction(pretty(tf));
-        delete circuit;
-        circuit = nullptr;
     } catch (const std::exception &e) {
         ++m_nexception;
         qDebug() << QString::fromStdString(e.what())
@@ -73,8 +68,6 @@ void Estimator::setQuality(Chromosome *c)
                  << " " << c->toPrintable();
         c->setQuality(FLT_EPSILON);
         c->setTransferFunction("Makes an inconsistent matrix");
-        delete circuit;
-        circuit = nullptr;
         return;
     }
 

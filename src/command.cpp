@@ -5,6 +5,7 @@
 #include "Analyzer/analyzer.h"
 #include "Analyzer/pretty.h"
 #include "Synthesizer/geneticsynthesizer.h"
+#include "dbg.h"
 #include <QtCore/QCoreApplication>
 #include <QtCore/QCommandLineParser>
 #include <QtCore/QString>
@@ -17,21 +18,24 @@ static int analyze(const QString& netlistFile, const QString& libraryDirectory)
 {
     QTextStream console(stdout);
     Netlist netlist;
-    QString err;
-    netlist.parse(&err, netlistFile, libraryDirectory);
-    if(!err.isEmpty()) {
-        console << "Netlist Parser Error: " << err << "\n";
-        console.flush();
-        return -1;
+    QFile file(netlistFile);
+
+   if(file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+           QTextStream stream(&file);
+           netlist.parse(stream, libraryDirectory);
+    } else {
+       qDebug() << "Cannot read" << netlistFile;
+       return -1;
     }
-    Circuit* cir = netlist.circuit();
-    Analyzer analyzer(cir);
+
+    Circuit *circuit = &netlist.circuit();
+    Analyzer analyzer(circuit);
     analyzer.solve();
-    delete cir;
-    QList<Analyzer::TransferFunction> t_funcs = analyzer.calcTFs(netlist.tfs());
+    QList<Analyzer::TransferFunction> results = analyzer.calcTFs(
+                netlist.transferFunctions());
     QString output;
-    for(int i = 0; i < t_funcs.size(); ++i){
-        output += pretty(t_funcs.at(i));
+    for(int i = 0; i < results.size(); ++i){
+        output += pretty(results.at(i));
         output += "\n";
     }
     console << output;

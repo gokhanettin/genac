@@ -15,20 +15,6 @@ CfoaFilterChromosome::CfoaFilterChromosome(int ncapacitors, int nresistors)
 }
 
 /*virtual*/
-QString CfoaFilterChromosome::input() const
-{
-    CONST_SPLIT_IE(this);
-    return QString("V(%1)").arg(_CONST_I(_CONST_E(4)));
-}
-
-/*virtual*/
-QString CfoaFilterChromosome::output() const
-{
-    CONST_SPLIT_IE(this);
-    return QString("V(%1)").arg(_CONST_I(_CONST_E(3)));
-}
-
-/*virtual*/
 QString CfoaFilterChromosome::toNetlist() const
 {
     CONST_SPLIT_IE(this);
@@ -58,7 +44,8 @@ QString CfoaFilterChromosome::toNetlist() const
            QString("F_Z 0 3 E_X 1\n") +
            QString("E_W 4 0 3 0 1\n") +
            QString(".ENDS\n");
-    str += QString(".TF %1 %2\n").arg(output(), input());
+    str += QString(".TF V(%1) V(%2)\n").arg(_CONST_I(_CONST_E(3)))
+                                       .arg(_CONST_I(_CONST_E(4)));
     str += ".END";
 
     return str;

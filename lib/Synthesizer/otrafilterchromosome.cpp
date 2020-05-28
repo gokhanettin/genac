@@ -15,20 +15,6 @@ OtraFilterChromosome::OtraFilterChromosome(int ncapacitors, int nresistors)
 }
 
 /*virtual*/
-QString OtraFilterChromosome::input() const
-{
-    CONST_SPLIT_IE(this);
-    return QString("V(%1)").arg(_CONST_I(_CONST_E(3)));
-}
-
-/*virtual*/
-QString OtraFilterChromosome::output() const
-{
-    CONST_SPLIT_IE(this);
-    return QString("V(%1)").arg(_CONST_I(_CONST_E(2)));
-}
-
-/*virtual*/
 QString OtraFilterChromosome::toNetlist() const
 {
     CONST_SPLIT_IE(this);
@@ -52,8 +38,6 @@ QString OtraFilterChromosome::toNetlist() const
         QString::number(_CONST_I(_CONST_E(1))) + " " +
         QString::number(_CONST_I(_CONST_E(2))) + " " + "OTRA\n";
 
-    str += ".LIB OTRA\n";
-
     str += QString(".SUBCKT OTRA 1 2 3\n") +
            QString("V_X 1 0 0\n") +
            QString("V_Y 2 0 0\n") +
@@ -62,7 +46,8 @@ QString OtraFilterChromosome::toNetlist() const
            QString("R_Z hidden 0 _inf\n") +
            QString("E_Z 3 0 hidden 0 1\n") +
            QString(".ENDS\n");
-    str += QString(".TF %1 %2\n").arg(output(), input());
+    str += QString(".TF V(%1) V(%2)\n").arg(_CONST_I(_CONST_E(2)))
+                                       .arg(_CONST_I(_CONST_E(3)));
     str += ".END";
 
     return str;
