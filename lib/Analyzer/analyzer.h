@@ -8,8 +8,10 @@ class Circuit;
 
 struct Equation
 {
-    GiNaC::ex rhs;
-    GiNaC::ex lhs;
+    GiNaC::ex rhsNum;
+    GiNaC::ex rhsDen;
+    GiNaC::ex lhsNum;
+    GiNaC::ex lhsDen;
 };
 
 class Analyzer

@@ -269,7 +269,7 @@ GiNaC::ex Analyzer::findValue(const QString& exp, bool *found)
              return m_result(i, 0);
          }
      }
-     return m_result(0,0);
+     return m_result(0, 0);
 }
 
 Analyzer::TransferFunction Analyzer::calcTF(const QString& out, const QString& in)
@@ -278,27 +278,18 @@ Analyzer::TransferFunction Analyzer::calcTF(const QString& out, const QString& i
     TransferFunction tf;
     bool found = false;
     const GiNaC::realsymbol inf = m_symbols.getInf();
+    const GiNaC::realsymbol s = m_symbols.getS();
 
     num = findValue(out, &found);
     den = findValue(in, &found);
 
-    tf.rhs = num/den;
+    num_den = (num / den).numer_denom();
 
-    num_den = tf.rhs.numer_denom();
+    tf.rhsNum = num_den.op(0).coeff(inf, 1).expand().collect(s);
+    tf.rhsDen = num_den.op(1).coeff(inf, 1).expand().collect(s);
 
-    int deg = num_den.op(0).degree(inf);
-
-    num = num_den.op(0).expand().coeff(inf, deg);
-    den = num_den.op(1).expand().coeff(inf, deg);
-    if(den == 0){
-        tf.rhs = inf;
-    }
-    else{
-        tf.rhs = num/den;
-    }
-
-    tf.lhs = GiNaC::realsymbol(out.toStdString()) / GiNaC::realsymbol(in.toStdString());
-
+    tf.lhsNum = GiNaC::realsymbol(out.toStdString());
+    tf.lhsDen = GiNaC::realsymbol(in.toStdString());
     return tf;
 }
 

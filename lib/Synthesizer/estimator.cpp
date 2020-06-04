@@ -71,28 +71,28 @@ void Estimator::setQuality(Chromosome *c)
         return;
     }
 
-    if (tf.rhs.is_zero() || tf.rhs.is_equal(m_inf) || tf.rhs.is_equal(1)) {
+    if (tf.rhsNum.is_zero()
+        || tf.rhsDen.is_zero()
+        || tf.rhsNum.is_equal(tf.rhsDen)) {
         c->setQuality(BETA);
         return;
     }
 
     int degree = reqsize / 2 - 1;
-    GiNaC::ex numer, denom, coeff;
+    GiNaC::ex coeff;
     bool exists = false;
     QVector<bool> v;
     v.resize(reqsize);
-    numer = tf.rhs.numer();
-    denom = tf.rhs.denom();
     cost = 0;
     for (int i = degree; i >= 0; --i) {
-        coeff = numer.coeff(m_s, i);
+        coeff = tf.rhsNum.coeff(m_s, i);
         exists = coeff.is_zero() == m_requirements[degree - i];
         v[degree - i] = exists;
         cost += exists;
 
     }
     for (int i = degree; i >= 0; --i) {
-        coeff = denom.coeff(m_s, i);
+        coeff = tf.rhsDen.coeff(m_s, i);
         exists = coeff.is_zero() == m_requirements[2*degree - i + 1];
         v[2*degree - i + 1] =  exists;
         cost += exists;

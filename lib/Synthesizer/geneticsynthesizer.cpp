@@ -115,9 +115,9 @@ void GeneticSynthesizer::run(const QString& nreq, const QString& dreq,
             if (c->quality() == 1.0f) {
                 save(c, n);
             }
-            //qDebug() << c->toPrintable() << " ---> " << c->fitness();
-           qDebug().nospace().noquote() << c->toNetlist();
-           qDebug().nospace().noquote() << c->transferFunction();
+            qDebug() << c->toPrintable() << " ---> " << c->fitness();
+            // qDebug().nospace().noquote() << c->toNetlist();
+            // qDebug().nospace().noquote() << c->transferFunction();
 
         }
         if (n == generations) {
