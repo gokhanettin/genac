@@ -95,7 +95,7 @@ public:
     QString toPrintable() const;
 
     void fill();
-    void normalize();
+    void canonicalize();
 
     virtual int nOpenCircuits() const;
     virtual int nShortCircuits() const;

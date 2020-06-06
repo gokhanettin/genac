@@ -20,8 +20,8 @@ void Crossover::onePoint(const Chromosome *parent1, const Chromosome *parent2,
             (**child2)[i] = parent1->at(i);
         }
     }
-    (*child1)->normalize();
-    (*child2)->normalize();
+    (*child1)->canonicalize();
+    (*child2)->canonicalize();
 }
 
 void Crossover::twoPoint(const Chromosome *parent1, const Chromosome *parent2,
@@ -45,8 +45,8 @@ void Crossover::twoPoint(const Chromosome *parent1, const Chromosome *parent2,
             (**child2)[i] = parent2->at(i);
         }
     }
-    (*child1)->normalize();
-    (*child2)->normalize();
+    (*child1)->canonicalize();
+    (*child2)->canonicalize();
 }
 
 void Crossover::uniform(const Chromosome *parent1, const Chromosome *parent2,
@@ -65,8 +65,8 @@ void Crossover::uniform(const Chromosome *parent1, const Chromosome *parent2,
             (**child2)[i] = parent1->at(i);
         }
     }
-    (*child1)->normalize();
-    (*child2)->normalize();
+    (*child1)->canonicalize();
+    (*child2)->canonicalize();
 }
 
 void Crossover::singleGene(const Chromosome *parent1, const Chromosome *parent2,
@@ -77,8 +77,8 @@ void Crossover::singleGene(const Chromosome *parent1, const Chromosome *parent2,
     *child2 = Chromosome::clone(*parent2);
     (**child1)[r] = parent2->at(r);
     (**child2)[r] = parent1->at(r);
-    (*child1)->normalize();
-    (*child2)->normalize();
+    (*child1)->canonicalize();
+    (*child2)->canonicalize();
 }
 
 void Crossover::multiGene(const Chromosome *parent1, const Chromosome *parent2,
@@ -93,7 +93,7 @@ void Crossover::multiGene(const Chromosome *parent1, const Chromosome *parent2,
         (**child1)[r] = parent2->at(r);
         (**child2)[r] = parent1->at(r);
     }
-    (*child1)->normalize();
-    (*child2)->normalize();
+    (*child1)->canonicalize();
+    (*child2)->canonicalize();
 }
 

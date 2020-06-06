@@ -143,7 +143,7 @@ Chromosome* Chromosome::create(Type type, int ncapacitors,
                 }
             }
         }
-        c->normalize();
+        c->canonicalize();
     }
 
     return c;
@@ -162,7 +162,7 @@ Chromosome* Chromosome::create(Type type, int ncapacitors,
         (*c)[i] = IE[i];
     }
 
-    c->normalize();
+    c->canonicalize();
     return c;
 }
 
@@ -180,7 +180,7 @@ Chromosome* Chromosome::clone(const Chromosome& other)
 }
 
 
-void Chromosome::normalize()
+void Chromosome::canonicalize()
 {
     int ncap = ncapacitors();
     int nres = nresistors();
