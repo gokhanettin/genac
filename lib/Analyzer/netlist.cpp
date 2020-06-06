@@ -58,7 +58,7 @@ void Netlist::parse(QTextStream& stream, const QString& libDir,
 
     if(stream.atEnd())
     {
-        if(m_stack.size() != 1 || m_stack.pop() != END)
+        if(!isLib && (m_stack.size() != 1 || m_stack.pop() != END))
         {
             qDebug() << "Netlist must end with .END";
         }
@@ -71,7 +71,7 @@ void Netlist::parse(QTextStream& stream, const QString& libDir,
 
         if(!line.isEmpty() && line.at(0) != '*')
         {
-            QStringList tokens = line.split(" ",QString::SkipEmptyParts);
+            QStringList tokens = line.split(" ", QString::SkipEmptyParts);
             switch(tokens.at(0).at(0).toUpper().toLatin1())
             {
             case 'Y':
