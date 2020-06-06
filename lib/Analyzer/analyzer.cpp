@@ -82,176 +82,176 @@ void Analyzer::solve()
     // print_matrix("solution", m_result);
 }
 
- void Analyzer::destroy()
- {
-     delete m_A; m_A = 0;
-     delete m_X; m_X = 0;
-     delete m_Z; m_Z = 0;
-     m_circuit = 0;
-     m_eqnCounter = 0;
- }
+void Analyzer::destroy()
+{
+    delete m_A; m_A = 0;
+    delete m_X; m_X = 0;
+    delete m_Z; m_Z = 0;
+    m_circuit = 0;
+    m_eqnCounter = 0;
+}
 
- GiNaC::ex& Analyzer::A(uint i,uint j)
- {
-     uint n = N();
-     uint m = M();
+GiNaC::ex& Analyzer::A(uint i,uint j)
+{
+    uint n = N();
+    uint m = M();
 
-     if(i < 1 || j <1 || i> m+n || j > m+n)
-        {
-            qDebug() << "Index Error at A";
-        }
-        --i;
-        --j;
+    if(i < 1 || j <1 || i> m+n || j > m+n)
+    {
+        qDebug() << "Index Error at A";
+    }
+    --i;
+    --j;
 
-        return (*m_A)(i,j);
- }
+    return (*m_A)(i,j);
+}
 
- GiNaC::ex& Analyzer::G(uint i,uint j)
- {
-     uint n = N();
+GiNaC::ex& Analyzer::G(uint i,uint j)
+{
+    uint n = N();
 
-     if(i < 1 || j < 1 || i>n || j>n )
-        {
-            qDebug() << "Index Error at G";
-        }
-       --i;
-       --j;
+    if(i < 1 || j < 1 || i>n || j>n )
+       {
+           qDebug() << "Index Error at G";
+       }
+      --i;
+      --j;
 
-        return (*m_A)(i,j);
- }
+       return (*m_A)(i,j);
+}
 
- GiNaC::ex& Analyzer::C(uint i,uint j)
- {
-     uint n = N();
-     uint m = M();
+GiNaC::ex& Analyzer::C(uint i,uint j)
+{
+    uint n = N();
+    uint m = M();
 
-     if(i < 1 || j < 1 || i > m || j > n)
-     {
-         qDebug() << "Index Error at C";
-     }
+    if(i < 1 || j < 1 || i > m || j > n)
+    {
+        qDebug() << "Index Error at C";
+    }
 
-     i += (n-1);
-   --j;
+    i += (n-1);
+  --j;
 
-     return (*m_A)(i,j);
- }
+    return (*m_A)(i,j);
+}
 
- GiNaC::ex& Analyzer::B(uint i,uint j)
- {
-     uint n = N();
-     uint m = M();
+GiNaC::ex& Analyzer::B(uint i,uint j)
+{
+    uint n = N();
+    uint m = M();
 
-     if(i < 1 || j < 1 || i > n || j > m)
-     {
-         qDebug() << "Index Error at B";
-     }
-     --i;
-       j += (n-1);
-     return (*m_A)(i,j);
- }
+    if(i < 1 || j < 1 || i > n || j > m)
+    {
+        qDebug() << "Index Error at B";
+    }
+    --i;
+      j += (n-1);
+    return (*m_A)(i,j);
+}
 
- GiNaC::ex& Analyzer::D(uint i,uint j)
- {
-     uint n = N();
-     uint m = M();
+GiNaC::ex& Analyzer::D(uint i,uint j)
+{
+    uint n = N();
+    uint m = M();
 
-     if(i < 1 || j < 1 || i > m || j > m)
-     {
-         qDebug() << "Index Error at D";
-     }
+    if(i < 1 || j < 1 || i > m || j > m)
+    {
+        qDebug() << "Index Error at D";
+    }
 
-     i += (n-1);
-     j += (n-1);
+    i += (n-1);
+    j += (n-1);
 
-     return (*m_A)(i,j);
- }
+    return (*m_A)(i,j);
+}
 
- GiNaC::ex& Analyzer::X(uint i)
- {
-     uint n = N();
-     uint m = M();
+GiNaC::ex& Analyzer::X(uint i)
+{
+    uint n = N();
+    uint m = M();
 
-     if(i < 1 || i > m+n)
-     {
-         qDebug() << "Index Error at X";
-     }
+    if(i < 1 || i > m+n)
+    {
+        qDebug() << "Index Error at X";
+    }
 
-     --i;
+    --i;
 
-     return (*m_X)(i,0);
- }
+    return (*m_X)(i,0);
+}
 
- GiNaC::ex& Analyzer::V(uint i)
- {
-     uint n = N();
+GiNaC::ex& Analyzer::V(uint i)
+{
+    uint n = N();
 
-     if(i  < 1 || i > n)
-     {
-         qDebug() << "Index Error at V";
-     }
+    if(i  < 1 || i > n)
+    {
+     qDebug() << "Index Error at V";
+    }
 
-     --i;
+    --i;
 
-     return (*m_X)(i,0);
- }
+    return (*m_X)(i,0);
+}
 
- GiNaC::ex& Analyzer::J(uint i)
- {
-     uint n = N();
-     uint m = M();
+GiNaC::ex& Analyzer::J(uint i)
+{
+    uint n = N();
+    uint m = M();
 
-     if(i < 1 || i > m)
-     {
-         qDebug() << "Index Error at J";
-     }
+    if(i < 1 || i > m)
+    {
+     qDebug() << "Index Error at J";
+    }
 
-     i += (n-1);
+    i += (n-1);
 
-     return (*m_X)(i,0);
- }
+    return (*m_X)(i,0);
+}
 
- GiNaC::ex& Analyzer::Z(uint i)
- {
-     uint n = N();
-     uint m = M();
+GiNaC::ex& Analyzer::Z(uint i)
+{
+    uint n = N();
+    uint m = M();
 
-     if(i < 1 || i > m+n)
-     {
-         qDebug() << "Index Error at Z";
-     }
-     --i;
+    if(i < 1 || i > m+n)
+    {
+     qDebug() << "Index Error at Z";
+    }
+    --i;
 
-     return (*m_Z)(i,0);
- }
+    return (*m_Z)(i,0);
+}
 
- GiNaC::ex& Analyzer::I(uint i)
- {
-     uint n = N();
+GiNaC::ex& Analyzer::I(uint i)
+{
+    uint n = N();
 
-     if(i  < 1 || i > n)
-     {
-         qDebug() << "Index Error at I";
-     }
+    if(i  < 1 || i > n)
+    {
+     qDebug() << "Index Error at I";
+    }
 
-     --i;
+    --i;
 
-     return (*m_Z)(i,0);
- }
+    return (*m_Z)(i,0);
+}
 
- GiNaC::ex& Analyzer::E(uint i)
- {
-     uint n = N();
-     uint m = M();
+GiNaC::ex& Analyzer::E(uint i)
+{
+    uint n = N();
+    uint m = M();
 
-     if(i < 1 || i > m)
-     {
-         qDebug() << "Index Error at E";
-     }
+    if(i < 1 || i > m)
+    {
+     qDebug() << "Index Error at E";
+    }
 
-     i += (n-1);
+    i += (n-1);
 
-     return (*m_Z)(i,0);
- }
+    return (*m_Z)(i,0);
+}
 
 GiNaC::ex Analyzer::findValue(const QString& exp, bool *found)
 {
@@ -285,8 +285,8 @@ Analyzer::TransferFunction Analyzer::calcTF(const QString& out, const QString& i
 
     num_den = (num / den).numer_denom();
 
-    tf.rhsNum = num_den.op(0).coeff(inf, 1).expand().collect(s);
-    tf.rhsDen = num_den.op(1).coeff(inf, 1).expand().collect(s);
+    tf.rhsNum = num_den.op(0).lcoeff(inf).expand().collect(s);
+    tf.rhsDen = num_den.op(1).lcoeff(inf).expand().collect(s);
 
     tf.lhsNum = GiNaC::realsymbol(out.toStdString());
     tf.lhsDen = GiNaC::realsymbol(in.toStdString());
