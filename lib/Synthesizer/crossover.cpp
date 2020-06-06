@@ -84,7 +84,7 @@ void Crossover::singleGene(const Chromosome *parent1, const Chromosome *parent2,
 void Crossover::multiGene(const Chromosome *parent1, const Chromosome *parent2,
                        Chromosome **child1, Chromosome **child2)
 {
-    int n = randomInt(1, parent1->size() - 2);
+    int n = randomInt(1, parent1->size() / 2);
 
     *child1 = Chromosome::clone(*parent1);
     *child2 = Chromosome::clone(*parent2);
