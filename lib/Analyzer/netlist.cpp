@@ -17,7 +17,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QIODevice>
 #include <QtCore/QTextStream>
-#include <QDir>
+#include <QtCore/QDir>
 
 
 void Netlist::parse(QTextStream & stream, const QString & libDir)

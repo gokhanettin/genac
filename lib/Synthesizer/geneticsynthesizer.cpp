@@ -7,6 +7,7 @@
 #include "mutation.h"
 #include "utilities.h"
 #include <QtCore/QString>
+#include <QtCore/QDir>
 #include <cmath>
 #include "dbg.h"
 
@@ -62,24 +63,10 @@ static bool lessThan(Chromosome *c1, Chromosome *c2)
 
 GeneticSynthesizer::GeneticSynthesizer()
     :m_estimator(new Estimator),
-     m_selectionType(RouletteWheel),
-     m_crossoverType(OnePoint),
-     m_population(nullptr),
-     m_recordFile(RECORDFILE),
-     m_saveFile(SAVEFILE)
+     m_selectionType(Rank),
+     m_crossoverType(MultiGene),
+     m_population(nullptr)
 {
-    if (m_saveFile.open(QFile::WriteOnly | QFile::Truncate)) {
-        m_saveStream.setDevice(&m_saveFile);
-    }
-    if (m_recordFile.open(QFile::WriteOnly | QFile::Truncate)) {
-        m_recordStream.setDevice(&m_recordFile);
-        m_recordStream.setRealNumberNotation(QTextStream::FixedNotation);
-        m_recordStream.setNumberFlags(QTextStream::ForcePoint);
-        m_recordStream.setRealNumberPrecision(4);
-        m_recordStream << "Generation;Avergage Quality;MaxQuality;"
-                       << "Average Fitness;Max Fitness;"
-                       << "Diversity;Mutation Probability" << "\n";
-    }
 }
 
 GeneticSynthesizer::~GeneticSynthesizer()
@@ -90,8 +77,38 @@ GeneticSynthesizer::~GeneticSynthesizer()
 void GeneticSynthesizer::run(const QString& nreq, const QString& dreq,
          const QString& active, int psize, int generations,
          const QString& selection, const QString& xover,
-         float xp, float mp, int cc, int rc, bool adaptivem)
+         float xp, float mp, int cc, int rc, bool adaptivem,
+         const QString& outputdir)
 {
+    bool ok = QDir().mkpath(outputdir);
+    if (!ok) {
+        qDebug() << "Failed to create path:" << outputdir;
+        return;
+    }
+
+    m_saveFile.setFileName(QDir(outputdir).filePath(SAVEFILE));
+    qDebug() << "Open file:" << m_saveFile.fileName();
+    if (m_saveFile.open(QFile::WriteOnly | QFile::Truncate)) {
+        m_saveStream.setDevice(&m_saveFile);
+    } else {
+        qDebug() << "Failed to open file:" << m_saveFile.fileName();
+        return;
+    }
+
+    m_recordFile.setFileName(QDir(outputdir).filePath(RECORDFILE));
+    if (m_recordFile.open(QFile::WriteOnly | QFile::Truncate)) {
+        m_recordStream.setDevice(&m_recordFile);
+        m_recordStream.setRealNumberNotation(QTextStream::FixedNotation);
+        m_recordStream.setNumberFlags(QTextStream::ForcePoint);
+        m_recordStream.setRealNumberPrecision(4);
+        m_recordStream << "Generation;Avergage Quality;MaxQuality;"
+                       << "Average Fitness;Max Fitness;"
+                       << "Diversity;Mutation Probability" << "\n";
+    } else {
+        qDebug() << "Failed to open file:" << m_recordFile.fileName();
+        return;
+    }
+
     m_estimator->setRequirements(nreq + dreq);
     Chromosome::Type ctype = Chromosome::OpampFilter;
     setChromosomeType(ctype, active);

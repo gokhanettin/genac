@@ -46,11 +46,12 @@ static int analyze(const QString& netlistFile, const QString& libraryDirectory)
 static int genetic_synthesize(const QString& nreq, const QString& dreq,
             const QString& active, int psize, int generations,
             const QString& selection, const QString& xover,
-            float xp, float mp, int cc, int rc, bool adaptivem)
+            float xp, float mp, int cc, int rc, bool adaptivem,
+             const QString& outputdir)
 {
     GeneticSynthesizer gs;
     gs.run(nreq, dreq, active, psize, generations, selection,
-           xover, xp, mp, cc, rc, adaptivem);
+           xover, xp, mp, cc, rc, adaptivem, outputdir);
     return 0;
 }
 
@@ -106,6 +107,9 @@ void buildCommandLineParser(QCommandLineParser* parser, const QCoreApplication& 
             {"mutation-probability",
                 QCoreApplication::translate("main", "Mutation probability. If unspecified, uses adaptive mutation probability."),
                 QCoreApplication::translate("main", "probability")},
+            {"outputdir",
+                QCoreApplication::translate("main", "Output directory save synthesis files. Default is present working directory."),
+                QCoreApplication::translate("main", "directory")},
             });
         parser->process(app);
     } else if (command == "analyze") {
@@ -145,6 +149,7 @@ int runCommand(QCommandLineParser& parser, QCoreApplication& app)
         QString active = parser.value("active-element");
         QString selection = parser.value("selection-type");
         QString xover = parser.value("crossover-type");
+        QString outputdir = parser.value("outputdir");
 
         float xp = parser.value("crossover-probability").toFloat(&ok);
         if (!ok) {
@@ -198,8 +203,13 @@ int runCommand(QCommandLineParser& parser, QCoreApplication& app)
             xover = "MULTIGENE";
         }
 
+        if (outputdir.isEmpty()) {
+            outputdir = ".";
+        }
+
         return genetic_synthesize(nreq, dreq, active, psize,
-                    generations, selection, xover, xp, mp, cc, rc, adaptivem);
+                generations, selection, xover, xp, mp, cc, rc,
+                adaptivem, outputdir);
     } else {
         parser.showHelp(-1);
     }

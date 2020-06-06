@@ -29,9 +29,10 @@ public:
     GeneticSynthesizer();
     ~GeneticSynthesizer();
     void run(const QString& nreq, const QString& dreq,
-                                const QString& active, int psize, int generations,
-                                const QString& selection, const QString& xover,
-                                float xp, float mp, int cc, int rc, bool adaptivem);
+             const QString& active, int psize, int generations,
+             const QString& selection, const QString& xover,
+             float xp, float mp, int cc, int rc, bool adaptivem,
+             const QString& outputdir);
 private:
     void select(Chromosome **parent1, Chromosome **parent2);
     void crossover(const Chromosome *parent1, const Chromosome *parent2,
