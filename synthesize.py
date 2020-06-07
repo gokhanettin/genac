@@ -8,13 +8,6 @@ parser = argparse.ArgumentParser(description='Run genetic synthesizer multiple t
 parser.add_argument('genac', help="Path to genac")
 parser.add_argument('outputdir', help="Output directory")
 
-actives = [
-    "OPAMP",
-    "OTRA",
-    "CFOA",
-    "CCII",
-]
-
 coeffs = [
     # numerator  denominator
     ("001",      "111"),
@@ -23,6 +16,13 @@ coeffs = [
     ("101",      "111"),
     ("111",      "111"),
     ( "11",       "11")
+]
+
+actives = [
+    "OPAMP",
+    "OTRA",
+    "CFOA",
+    "CCII",
 ]
 
 capacitors = [1, 2, 3, 4]
@@ -38,12 +38,12 @@ crossover_probability = 0.9
 
 args = parser.parse_args()
 
-for active in actives:
-    for (numerator, denominator) in coeffs:
-        for capacitor in capacitors:
-            for resistor in resistors:
-                if len(denominator) - 1 > capacitor:
-                    continue
+for (numerator, denominator) in coeffs:
+    for capacitor in capacitors:
+        if len(denominator) - 1 > capacitor:
+            continue
+        for resistor in resistors:
+            for active in actives:
 
                 outputdir = os.path.join(
                     args.outputdir,
