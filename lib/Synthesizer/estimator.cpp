@@ -118,8 +118,6 @@ void Estimator::setQuality(Chromosome *c)
     imperfections[reqsize - 1] = bad;
     cost += bad;
 
-    qDebug() << "Degree requirements" << tf.rhsNum.degree(m_s) << m_requirements[reqsize - 2]
-             << tf.rhsDen.degree(m_s) << m_requirements[reqsize - 1];
     c->setImperfections(imperfections);
     c->setQuality(VALID_FUNC(cost));
 }

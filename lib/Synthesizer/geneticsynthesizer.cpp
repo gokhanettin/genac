@@ -87,7 +87,6 @@ void GeneticSynthesizer::run(const QString& nreq, const QString& dreq,
     }
 
     m_saveFile.setFileName(QDir(outputdir).filePath(SAVEFILE));
-    qDebug() << "Open file:" << m_saveFile.fileName();
     if (m_saveFile.open(QFile::WriteOnly | QFile::Truncate)) {
         m_saveStream.setDevice(&m_saveFile);
     } else {
