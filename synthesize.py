@@ -25,9 +25,9 @@ actives = [
     "CCII",
 ]
 
-capacitors = [1, 2, 3, 4]
+capacitors = [1, 2, 3]
 
-resistors = [2, 3, 4, 5, 6]
+resistors = [2, 3, 4, 5]
 
 population_size = 20
 ngenerations = 500
