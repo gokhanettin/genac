@@ -17,14 +17,14 @@ public:
     void setQuality(Chromosome *c);
     void setPopulationData(Population *p);
     void setRequirements(const QString& requirements);
-    QVector<bool> requirements() {return m_requirements;}
+    QVector<int> requirements() {return m_requirements;}
 private:
     Analyzer *m_analyzer;
     int m_nexception;
     QVector<unsigned long long> m_sums;
     GiNaC::realsymbol m_s;
     GiNaC::realsymbol m_inf;
-    QVector<bool> m_requirements;
+    QVector<int> m_requirements;
 };
 
 

@@ -30,11 +30,23 @@ Estimator::~Estimator()
 
 void Estimator::setRequirements(const QString& requirements)
 {
-    m_requirements.resize(requirements.size());
-    for (int i = 0; i < requirements.size(); ++i) {
-        m_requirements[i] = (requirements[i] == '1');
+    m_requirements.resize(requirements.size() + 2);
+    int i = 0;
+    for (i = 0; i < requirements.size(); ++i) {
+        if (requirements[i] == '1') {
+            m_requirements[i] = 1;
+        } else {
+            m_requirements[i] = 0;
+        }
     }
-    m_sums.resize(requirements.size());
+
+    int half = requirements.size() / 2;
+    QString numerator = requirements.left(half);
+    QString denominator = requirements.mid(half);
+
+    m_requirements[i++] = half - numerator.indexOf('1') - 1;
+    m_requirements[i] = half - denominator.indexOf('1') - 1;
+    m_sums.resize(m_requirements.size());
 }
 
 void Estimator::setQuality(Chromosome *c)
@@ -42,7 +54,7 @@ void Estimator::setQuality(Chromosome *c)
     if (!c->transferFunction().isEmpty()) {
         return;
     }
-    int reqsize = m_requirements.size();
+
     int cost = c->nShortCircuits() + c->nOpenCircuits();
     if (cost > 0) {
         c->setQuality(INVALID_FUNC(cost));
@@ -78,26 +90,37 @@ void Estimator::setQuality(Chromosome *c)
         return;
     }
 
-    int degree = reqsize / 2 - 1;
+    int reqsize = m_requirements.size();
+    int degree = reqsize / 2 - 2;
     GiNaC::ex coeff;
-    bool exists = false;
-    QVector<bool> v;
-    v.resize(reqsize);
+    bool bad = false;
+    QVector<bool> imperfections;
+    imperfections.resize(reqsize);
     cost = 0;
     for (int i = degree; i >= 0; --i) {
         coeff = tf.rhsNum.coeff(m_s, i);
-        exists = coeff.is_zero() == m_requirements[degree - i];
-        v[degree - i] = exists;
-        cost += exists;
+        bad = coeff.is_zero() == m_requirements[degree - i];
+        imperfections[degree - i] = bad;
+        cost += bad;
 
     }
     for (int i = degree; i >= 0; --i) {
         coeff = tf.rhsDen.coeff(m_s, i);
-        exists = coeff.is_zero() == m_requirements[2*degree - i + 1];
-        v[2*degree - i + 1] =  exists;
-        cost += exists;
+        bad = coeff.is_zero() == m_requirements[2*degree - i + 1];
+        imperfections[2*degree - i + 1] = bad;
+        cost += bad;
     }
-    c->setImperfections(v);
+
+    bad = tf.rhsNum.degree(m_s) != m_requirements[reqsize - 2];
+    imperfections[reqsize - 2] = bad;
+    cost += bad;
+    bad = tf.rhsDen.degree(m_s) != m_requirements[reqsize - 1];
+    imperfections[reqsize - 1] = bad;
+    cost += bad;
+
+    qDebug() << "Degree requirements" << tf.rhsNum.degree(m_s) << m_requirements[reqsize - 2]
+             << tf.rhsDen.degree(m_s) << m_requirements[reqsize - 1];
+    c->setImperfections(imperfections);
     c->setQuality(VALID_FUNC(cost));
 }
 
